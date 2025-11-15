@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "doggy";
+  src: url("/src/assets/fonts/Hoover-Medium.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
