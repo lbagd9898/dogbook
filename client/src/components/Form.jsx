@@ -1,6 +1,6 @@
 import Button from "./Button";
 
-export default function Form({ header, fields }) {
+export default function Form({ header, fields, signInLink, gitHubLink }) {
   return (
     <>
       <div className="flex flex-col font-doggy p-4 justify-center gap-2 margin-4 items-center">
