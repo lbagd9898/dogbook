@@ -1,0 +1,50 @@
+import Header from "../components/Header";
+import Form from "../components/Form";
+import Footer from "../components/Footer";
+import { useState } from "react";
+
+export default function SignUp() {
+  //Sign in form variables
+  const fields = [
+    { name: "username", type: "text", label: "Username:" },
+    { name: "email", type: "email", label: "Email: " },
+    { name: "password", type: "password", label: "Password: " },
+    { name: "confirmPassword", type: "password", label: "Confirm Password: " },
+  ];
+
+  const buttonText = "Sign Up";
+
+  const [inputVals, setInputVals] = useState({
+    username: "",
+    password: "",
+    email: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInputVals((prev) => ({ ...prev, [name]: value }));
+    console.log(inputVals);
+  };
+
+  const header = "Enter your Info Below";
+  return (
+    <div className="flex flex-col h-screen">
+      <Header />
+      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600">
+        <div className="flex flex-col font-doggy p-4 justify-center gap-2 m-10 items-center">
+          <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 shadow-lg bg-white gap-2">
+            <Form
+              fields={fields}
+              header={header}
+              inputVals={inputVals}
+              onChange={handleChange}
+              buttonText={buttonText}
+            ></Form>
+          </div>
+        </div>
+      </div>
+      <Footer></Footer>
+    </div>
+  );
+}
