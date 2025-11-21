@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import Form from "../components/Form";
 import Footer from "../components/Footer";
 import { useState } from "react";
+import Errors from '../components/Errors'
 
 export default function SignUp() {
   //Sign in form variables
@@ -31,7 +32,7 @@ export default function SignUp() {
     e.preventDefault()
     console.log('submitted')
     try {
-      const res = await fetch('http://localhost/3000/auth/sign-up', {
+      const res = await fetch('http://localhost:3000/auth/sign-up', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json' 
@@ -62,6 +63,7 @@ export default function SignUp() {
               onSubmit={onSubmit}
             ></Form>
           </div>
+          <Errors></Errors>
         </div>
       </div>
       <Footer></Footer>
