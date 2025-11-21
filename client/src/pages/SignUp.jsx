@@ -27,9 +27,24 @@ export default function SignUp() {
     console.log(inputVals);
   };
 
-  const onSubmit = () => {
+  const onSubmit = async (e) => {
+    e.preventDefault()
     console.log('submitted')
-  }
+    try {
+      const res = await fetch('http://localhost/3000/auth/sign-up', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(inputVals) 
+        });
+
+        const result = await res.json()
+        console.log(result)
+      } catch(e) {
+        console.log(e)
+      }
+    }
 
   const header = "Enter your Info Below";
   return (

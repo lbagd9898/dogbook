@@ -7,6 +7,7 @@ authRouter.get('/', (req, res) => {
 })
 
 authRouter.get('/sign-up', async (req, res) => {
+    console.log(req.body)
     res.send(req.body)
 })
 

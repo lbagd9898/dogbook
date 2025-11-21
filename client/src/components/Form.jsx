@@ -6,10 +6,12 @@ export default function Form({
   inputVals,
   onChange,
   buttonText,
+  onSubmit
 }) {
   return (
     <>
       <form
+      onSubmit={onSubmit}
         action="POST"
         className="flex flex-col justify-center gap-1.5 items-center"
       >
