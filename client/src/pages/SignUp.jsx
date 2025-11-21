@@ -51,8 +51,7 @@ export default function SignUp() {
   return (
     <div className="flex flex-col h-screen">
       <Header />
-      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600">
-        <div className="flex flex-col font-doggy p-4 justify-center gap-2 m-10 items-center">
+      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy pt-9 gap-2 items-center m-0">
           <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 shadow-lg bg-white gap-2">
             <Form
               fields={fields}
@@ -64,7 +63,6 @@ export default function SignUp() {
             ></Form>
           </div>
           <Errors></Errors>
-        </div>
       </div>
       <Footer></Footer>
     </div>
