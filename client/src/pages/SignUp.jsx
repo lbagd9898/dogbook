@@ -27,6 +27,10 @@ export default function SignUp() {
     console.log(inputVals);
   };
 
+  const onSubmit = () => {
+    console.log('submitted')
+  }
+
   const header = "Enter your Info Below";
   return (
     <div className="flex flex-col h-screen">
@@ -40,6 +44,7 @@ export default function SignUp() {
               inputVals={inputVals}
               onChange={handleChange}
               buttonText={buttonText}
+              onSubmit={onSubmit}
             ></Form>
           </div>
         </div>

@@ -1,18 +1,17 @@
 import express from "express";
 import { prisma } from "./prismaClient.js";
+import cors from 'cors';
+import path from 'path';
+import authRouter from './router/authRouter.js'
 
 const app = express();
 
+app.use(cors())
+app.use(express.json())
+
 const PORT = 3000;
 
-app.get("/", (req, res) => {
-  const user = prisma.users.findUnique({
-    where: {
-      id: 1,
-    },
-  });
-  res.send(user);
-});
+app.use('/auth', authRouter)
 
 app.listen(PORT, () => {
   console.log("server running");
