@@ -2,7 +2,7 @@ import Header from "../components/Header";
 import Form from "../components/Form";
 import Footer from "../components/Footer";
 import { useState } from "react";
-import Errors from '../components/Errors'
+import Errors from "../components/Errors";
 
 export default function SignUp() {
   //Sign in form variables
@@ -29,29 +29,30 @@ export default function SignUp() {
   };
 
   const onSubmit = async (e) => {
-    e.preventDefault()
-    console.log('submitted')
+    e.preventDefault();
+    console.log("submitted");
     try {
-      const res = await fetch('http://localhost:3000/auth/sign-up', {
-        method: 'POST',
+      const res = await fetch("http://localhost:3000/auth/sign-up", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json' 
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(inputVals) 
-        });
+        body: JSON.stringify(inputVals),
+      });
 
-        const result = await res.json()
-        console.log(result)
-      } catch(e) {
-        console.log(e)
-      }
+      const result = await res.json();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
     }
+  };
 
   const header = "Enter your Info Below";
   return (
     <div className="flex flex-col h-screen">
       <Header />
       <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy pt-9 gap-2 items-center m-0">
+        <div>
           <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 shadow-lg bg-white gap-2">
             <Form
               fields={fields}
@@ -63,6 +64,7 @@ export default function SignUp() {
             ></Form>
           </div>
           <Errors></Errors>
+        </div>
       </div>
       <Footer></Footer>
     </div>

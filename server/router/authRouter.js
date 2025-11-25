@@ -6,7 +6,7 @@ authRouter.get('/', (req, res) => {
     res.send('check')
 })
 
-authRouter.get('/sign-up', async (req, res) => {
+authRouter.post('/sign-up', async (req, res) => {
     console.log(req.body)
     res.send(req.body)
 })
