@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import Form from "../components/Form";
 import Footer from "../components/Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Errors from "../components/Errors";
 
 export default function SignUp() {
@@ -12,6 +12,12 @@ export default function SignUp() {
     { name: "password", type: "password", label: "Password: " },
     { name: "confirmPassword", type: "password", label: "Confirm Password: " },
   ];
+
+  //determines if user has started typing yet or not
+  const [touched, setTouched] = useState(false);
+
+  //list of errors for form validation
+  const [errors, setErrors] = useState([]);
 
   const buttonText = "Sign Up";
 
@@ -26,24 +32,66 @@ export default function SignUp() {
     const { name, value } = e.target;
     setInputVals((prev) => ({ ...prev, [name]: value }));
     console.log(inputVals);
+    if (!touched) {
+      setTouched(true);
+    }
   };
+
+  //populates errors array as user types
+  //validates form inputs before sending to server
+  function validate(values) {
+    const errors = [];
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+    if (!values.username) {
+      errors.push("Username required.");
+    } else if (values.username.length < 4 || values.username.length > 15) {
+      errors.push("Username must be between 5 and 15 characters.");
+    }
+    if (!values.password) {
+      errors.push("Password required.");
+    } else if (values.password.length < 4 || values.password.length > 15) {
+      errors.push("Password must be between 4 and 15 characters");
+    } else if (!passwordRegex.test(values.password)) {
+      errors.push("Password must contain at least one letter and one number.");
+    }
+    if (!values.email) {
+      errors.push("Email required.");
+    } else if (!values.email.includes("@")) {
+      errors.push("Valid email required.");
+    }
+    if (values.password != values.confirmPassword) {
+      errors.push("The two passwords must match.");
+    }
+    return errors;
+  }
+
+  useEffect(() => {
+    if (touched) {
+      const newErrors = validate(inputVals);
+      setErrors(newErrors);
+    }
+  }, [inputVals]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     console.log("submitted");
-    try {
-      const res = await fetch("http://localhost:3000/auth/sign-up", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(inputVals),
-      });
+    if (errors.length === 0) {
+      try {
+        const res = await fetch("http://localhost:3000/auth/sign-up", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(inputVals),
+        });
 
-      const result = await res.json();
-      console.log(result);
-    } catch (e) {
-      console.log(e);
+        const result = await res.json();
+        console.log(result);
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      console.log("nope");
     }
   };
 
@@ -51,7 +99,7 @@ export default function SignUp() {
   return (
     <div className="flex flex-col h-screen">
       <Header />
-      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy pt-9 gap-2 items-center m-0">
+      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy pt-[5%] gap-2 items-center m-0">
         <div>
           <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 shadow-lg bg-white gap-2">
             <Form
@@ -63,7 +111,7 @@ export default function SignUp() {
               onSubmit={onSubmit}
             ></Form>
           </div>
-          <Errors></Errors>
+          {errors?.length > 0 && <Errors errors={errors} />}
         </div>
       </div>
       <Footer></Footer>

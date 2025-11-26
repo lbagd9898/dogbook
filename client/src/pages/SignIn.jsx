@@ -31,29 +31,27 @@ export default function SignIn() {
   return (
     <div className="h-screen flex flex-col">
       <Header />
-      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600">
-        <div className="flex flex-col font-doggy p-4 justify-center gap-2 m-10 items-center">
-          <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 shadow-lg bg-white gap-2">
-            <Form
-              header={header}
-              fields={fields}
-              inputVals={inputVals}
-              onChange={handleChange}
-              buttonText={buttonText}
-            />
-            <p>Don't have an account?</p>
-            <Button
-              text="Sign Up!"
-              theme="dark"
-              onClick={() => navigate("/sign-up")}
-            ></Button>
-            <em>Or</em>
-            <Button
-              text="Sign in with Github"
-              theme="dark"
-              icon={githubIcon}
-            ></Button>
-          </div>
+      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy pt-[5%] gap-2 items-center">
+        <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 shadow-lg bg-white gap-2">
+          <Form
+            header={header}
+            fields={fields}
+            inputVals={inputVals}
+            onChange={handleChange}
+            buttonText={buttonText}
+          />
+          <p>Don't have an account?</p>
+          <Button
+            text="Sign Up!"
+            theme="dark"
+            onClick={() => navigate("/sign-up")}
+          ></Button>
+          <em>Or</em>
+          <Button
+            text="Sign in with Github"
+            theme="dark"
+            icon={githubIcon}
+          ></Button>
         </div>
       </div>
       <Footer></Footer>
