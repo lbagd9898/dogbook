@@ -12,14 +12,25 @@ export default function SignIn() {
 
   const location = useLocation();
   const [showBanner, setShowBanner] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
     if (location.state?.showBanner) {
       setShowBanner(true);
+
+      // Hide banner after 5 seconds
+      const fadeTimer = setTimeout(() => setFadeOut(true), 5000);
+
+      const removeTimers = setTimeout(() => {
+        setShowBanner(false);
+        setFadeOut(false);
+      }, 5500);
+
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(removeTimers);
+      };
     }
-    // Hide banner after 5 seconds
-    const timer = setTimeout(() => setShowBanner(false), 5000);
-    return () => clearTimeout(timer);
   }, [location.state]);
 
   //form variables
@@ -67,7 +78,9 @@ export default function SignIn() {
             ></Button>
           </div>
           {showBanner && (
-            <div className="bg-[#ACE1AF] border-2 border-[#66AA66] mt-2 rounded flex justify-center p-1 text-[#226622]">
+            <div
+              className={`bg-[#ACE1AF] border-2 border-[#66AA66] mt-2 rounded flex justify-center p-1 text-[#226622] transition-opacity duration-500 ${fadeOut ? "opacity-0" : "opacity-100"}`}
+            >
               Enter your credentials.
             </div>
           )}
