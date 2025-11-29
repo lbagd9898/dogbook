@@ -1,5 +1,6 @@
-import { prisma } from "../prismaClient";
-import { body } from "express-validator";
+import { prisma } from "../prismaClient.js";
+import { body, validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
 
 export const validateSignUp = [
   body("username")
@@ -32,6 +33,47 @@ export const validateSignUp = [
 ];
 
 export async function postSignUp(req, res) {
-  const body = req.body;
-  res.json({ body });
+  //check for errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(200).json({ errors: errors.array() });
+  }
+
+  // extract data from req body
+  const { username, email, password } = req.body;
+
+  try {
+    const existingUsername = await prisma.user.findFirst({
+      where: {
+        username: username,
+      },
+    });
+    if (existingUsername) {
+      res.status(400).json({ message: "Username already in use." });
+    }
+
+    const existingEmail = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    if (existingEmail) {
+      res.status(400).json({ message: "Email already in use." });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    res.status(201).json({ user });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "server error" });
+  }
 }
