@@ -3,8 +3,12 @@ import Form from "../components/Form";
 import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import Errors from "../components/Errors";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
+  //generate navigate
+  const navigate = useNavigate();
+
   //Sign in form variables
   const fields = [
     { name: "username", type: "text", label: "Username:" },
@@ -28,10 +32,11 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
+  const [usedUsernames, setUsedUsernames] = useState([]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInputVals((prev) => ({ ...prev, [name]: value }));
-    console.log(inputVals);
     if (!touched) {
       setTouched(true);
     }
@@ -84,14 +89,27 @@ export default function SignUp() {
           },
           body: JSON.stringify(inputVals),
         });
-
-        const result = await res.json();
-        console.log(result);
+        const data = await res.json();
+        if (res.ok) {
+          console.log("successful", data);
+          navigate("/", {
+            state: { showBanner: true },
+          });
+        } else {
+          console.log(data);
+          if (data.message) {
+            setErrors([data.message]);
+          }
+          if (data.errors) {
+            const messages = data.errors.map((err) => err.msg);
+            setErrors([messages]);
+          }
+        }
       } catch (e) {
         console.log(e);
       }
     } else {
-      console.log("nope");
+      return;
     }
   };
 
