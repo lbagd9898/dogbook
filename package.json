@@ -1,0 +1,26 @@
+{
+  "name": "dogbook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lbagd9898/dogbook.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lbagd9898/dogbook/issues"
+  },
+  "homepage": "https://github.com/lbagd9898/dogbook#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
