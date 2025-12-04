@@ -33,6 +33,7 @@ export const validateSignUp = [
 ];
 
 export async function postSignUp(req, res) {
+  console.log("server reached");
   //check for errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -49,7 +50,7 @@ export async function postSignUp(req, res) {
       },
     });
     if (existingUsername) {
-      res.status(400).json({ message: "Username already in use." });
+      return res.status(400).json({ message: "Username already in use." });
     }
 
     const existingEmail = await prisma.user.findFirst({
@@ -58,7 +59,7 @@ export async function postSignUp(req, res) {
       },
     });
     if (existingEmail) {
-      res.status(400).json({ message: "Email already in use." });
+      return res.status(400).json({ message: "Email already in use." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -71,9 +72,9 @@ export async function postSignUp(req, res) {
       },
     });
 
-    res.status(201).json({ user });
+    return res.status(201).json({ user });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "server error" });
+    return res.status(500).json({ message: "server error" });
   }
 }
