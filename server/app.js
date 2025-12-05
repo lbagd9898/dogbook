@@ -1,13 +1,15 @@
 import express from "express";
 import cors from "cors";
 import authRouter from "./routers/authRouter.js";
+import passport from "./middleware/passport.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use("/auth", authRouter);
 
