@@ -9,7 +9,6 @@ const authRouter = express.Router();
 authRouter.get("/", (req, res) => {
   res.send("check");
 });
-
 authRouter.post("/sign-up", validateSignUp, postSignUp);
 authRouter.post("/log-in", postLogIn);
 

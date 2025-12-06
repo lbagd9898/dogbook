@@ -50,7 +50,7 @@ export default function SignUp() {
     }
   };
 
-  //populates errors array as user types
+  //populates errors array as the user types
   //validates form inputs before sending to server
   function validate(values) {
     const errors = [];

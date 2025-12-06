@@ -68,6 +68,28 @@ export default function SignIn() {
     }
   };
 
+  //submits info to server on submit
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    console.log("submitted");
+    if (errors.length === 0) {
+      try {
+        const res = await fetch("http://localhost:3000/auth/log-in", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(inputVals),
+        });
+        const data = await res.json();
+        console.log(data);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  //re-populates error messages after the user types
   function validate(values) {
     const errors = [];
     if (!values.email) {
@@ -93,6 +115,7 @@ export default function SignIn() {
               inputVals={inputVals}
               onChange={handleChange}
               buttonText={buttonText}
+              onSubmit={onSubmit}
             />
             <p>Don't have an account?</p>
             <Button

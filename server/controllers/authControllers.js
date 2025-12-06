@@ -1,6 +1,8 @@
 import { prisma } from "../prismaClient.js";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
+import passport from "passport";
+import jwt from "jsonwebtoken";
 
 export const validateSignUp = [
   body("username")
@@ -79,4 +81,21 @@ export async function postSignUp(req, res) {
   }
 }
 
-export async function postLogIn(req, res, next) {}
+export async function postLogIn(req, res, next) {
+  passport.authenticate("local", (err, user, info) => {
+    console.log("passport info", info);
+    if (err) return next(err);
+    if (!user) return res.status(401).json({ message: info.message });
+
+    //user exists and login is successful
+    jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.JWT_SECRET,
+      (err, token) => {
+        if (err)
+          return res.status(500).json({ message: "token generatio failed" });
+        return res.status(200).json({ token });
+      }
+    );
+  });
+}
