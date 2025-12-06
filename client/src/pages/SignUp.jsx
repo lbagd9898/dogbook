@@ -6,24 +6,11 @@ import Errors from "../components/Errors";
 import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
-  //generate navigate
-  const navigate = useNavigate();
-
-  //Sign in form variables
-  const fields = [
-    { name: "username", type: "text", label: "Username:" },
-    { name: "email", type: "email", label: "Email: " },
-    { name: "password", type: "password", label: "Password: " },
-    { name: "confirmPassword", type: "password", label: "Confirm Password: " },
-  ];
-
   //determines if user has started typing yet or not
   const [touched, setTouched] = useState(false);
 
   //list of errors for form validation
   const [errors, setErrors] = useState([]);
-
-  const buttonText = "Sign Up";
 
   const [inputVals, setInputVals] = useState({
     username: "",
@@ -32,7 +19,28 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  const [usedUsernames, setUsedUsernames] = useState([]);
+  //generate navigate
+  const navigate = useNavigate();
+
+  //static variables
+  //Sign in form variables
+  const fields = [
+    { name: "username", type: "text", label: "Username:" },
+    { name: "email", type: "email", label: "Email: " },
+    { name: "password", type: "password", label: "Password: " },
+    { name: "confirmPassword", type: "password", label: "Confirm Password: " },
+  ];
+
+  const buttonText = "Sign Up";
+
+  const header = "Enter your Info Below";
+
+  useEffect(() => {
+    if (touched) {
+      const newErrors = validate(inputVals);
+      setErrors(newErrors);
+    }
+  }, [inputVals]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,13 +78,6 @@ export default function SignUp() {
     return errors;
   }
 
-  useEffect(() => {
-    if (touched) {
-      const newErrors = validate(inputVals);
-      setErrors(newErrors);
-    }
-  }, [inputVals]);
-
   const onSubmit = async (e) => {
     e.preventDefault();
     console.log("submitted");
@@ -113,7 +114,6 @@ export default function SignUp() {
     }
   };
 
-  const header = "Enter your Info Below";
   return (
     <div className="flex flex-col h-screen">
       <Header />

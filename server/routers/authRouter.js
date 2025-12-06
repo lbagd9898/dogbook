@@ -1,5 +1,9 @@
 import express from "express";
-import { validateSignUp, postSignUp } from "../controllers/authControllers.js";
+import {
+  validateSignUp,
+  postSignUp,
+  postLogIn,
+} from "../controllers/authControllers.js";
 const authRouter = express.Router();
 
 authRouter.get("/", (req, res) => {
@@ -7,5 +11,6 @@ authRouter.get("/", (req, res) => {
 });
 
 authRouter.post("/sign-up", validateSignUp, postSignUp);
+authRouter.post("/log-in", postLogIn);
 
 export default authRouter;

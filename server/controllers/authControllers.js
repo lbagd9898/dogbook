@@ -78,3 +78,5 @@ export async function postSignUp(req, res) {
     return res.status(500).json({ message: "server error" });
   }
 }
+
+export async function postLogIn(req, res, next) {}

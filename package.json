@@ -22,5 +22,8 @@
   "homepage": "https://github.com/lbagd9898/dogbook#readme",
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.3"
   }
 }

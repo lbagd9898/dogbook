@@ -3,17 +3,44 @@ import Form from "../components/Form";
 import Footer from "../components/Footer";
 import Button from "../components/Button";
 import githubIcon from "../assets/icons/github.svg";
+import Errors from "../components/Errors";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function SignIn() {
-  //button link navigation
-  const navigate = useNavigate();
-
-  const location = useLocation();
+  //determines if user has started typing yet
+  const [touched, setTouched] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
 
+  //input values
+  const [inputVals, setInputVals] = useState({ email: "", password: "" });
+
+  //list of errors in clientside form validation
+  const [errors, setErrors] = useState([]);
+
+  //button link navigation
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  //static variables
+  //form variables
+  const fields = [
+    { name: "email", type: "email", label: "Email:" },
+    { name: "password", type: "password", label: "Password: " },
+  ];
+  const buttonText = "Log In";
+  const header = "Sign In Below";
+
+  //re-populates errors array as user types
+  useEffect(() => {
+    if (touched) {
+      const newErrors = validate(inputVals);
+      setErrors(newErrors);
+    }
+  }, [inputVals]);
+
+  //shows banner if user redirects from sign-up page
   useEffect(() => {
     if (location.state?.showBanner) {
       setShowBanner(true);
@@ -33,23 +60,26 @@ export default function SignIn() {
     }
   }, [location.state]);
 
-  //form variables
-  const fields = [
-    { name: "username", type: "text", label: "Username:" },
-    { name: "password", type: "password", label: "Password: " },
-  ];
-
-  const buttonText = "Log In";
-
-  const [inputVals, setInputVals] = useState({ username: "", password: "" });
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInputVals((prev) => ({ ...prev, [name]: value }));
-    console.log(inputVals);
+    if (!touched) {
+      setTouched(true);
+    }
   };
 
-  const header = "Sign In Below";
+  function validate(values) {
+    const errors = [];
+    if (!values.email) {
+      errors.push("Email required.");
+    } else if (!values.email.includes("@")) {
+      errors.push("Valid email required.");
+    }
+    if (!values.password) {
+      errors.push("Password required.");
+    }
+    return errors;
+  }
 
   return (
     <div className="h-screen flex flex-col">
@@ -77,6 +107,7 @@ export default function SignIn() {
               icon={githubIcon}
             ></Button>
           </div>
+          {errors?.length > 0 && <Errors errors={errors} />}
           {showBanner && (
             <div
               className={`bg-[#ACE1AF] border-2 border-[#66AA66] mt-2 rounded flex justify-center p-1 text-[#226622] transition-opacity duration-500 ${fadeOut ? "opacity-0" : "opacity-100"}`}
