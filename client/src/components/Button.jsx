@@ -6,7 +6,7 @@ export default function Button({ text, theme = "light", onClick, icon }) {
 
   return (
     <button
-      className={`px-5 py-1 rounded cursor-pointer flex items-center justify-center gap-2 ${themeClasses[theme]}`}
+      className={`px-5 py-1 rounded cursor-pointer flex items-center justify-center gap-2 text-base md:text-lg lg:text-xl ${themeClasses[theme]}`}
       onClick={onClick}
     >
       {icon && <img src={icon} className="w-[1em] h-[1em]" />} <div>{text}</div>

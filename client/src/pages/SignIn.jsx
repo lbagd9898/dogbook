@@ -106,9 +106,9 @@ export default function SignIn() {
   return (
     <div className="h-screen flex flex-col">
       <Header />
-      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy pt-[5%] gap-2 items-center">
+      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy gap-2 items-center pt-[5vh] md:pt-[8vh]">
         <div>
-          <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 shadow-lg bg-white gap-2">
+          <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 md:p-6 lg:p-8 shadow-lg bg-white gap-4 md:gap-6 text-base md:text-lg lg:text-xl">
             <Form
               header={header}
               fields={fields}
