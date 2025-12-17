@@ -83,7 +83,6 @@ export async function postSignUp(req, res) {
 
 export async function postLogIn(req, res, next) {
   passport.authenticate("local", (err, user, info) => {
-    console.log("passport info", info);
     if (err) return next(err);
     if (!user) return res.status(401).json({ message: info.message });
 
@@ -97,5 +96,5 @@ export async function postLogIn(req, res, next) {
         return res.status(200).json({ token });
       }
     );
-  });
+  })(req, res, next);
 }
