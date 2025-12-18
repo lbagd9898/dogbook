@@ -87,14 +87,13 @@ export async function postLogIn(req, res, next) {
     if (!user) return res.status(401).json({ message: info.message });
 
     //user exists and login is successful
-    jwt.sign(
+    const token = jwt.sign(
       { id: user.id, username: user.username },
-      process.env.JWT_SECRET,
-      (err, token) => {
-        if (err)
-          return res.status(500).json({ message: "token generatio failed" });
-        return res.status(200).json({ token });
-      }
+      process.env.JWT_SECRET
     );
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+    return res.status(200).json({ message: "Login successful" });
   })(req, res, next);
 }

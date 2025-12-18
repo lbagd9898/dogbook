@@ -80,6 +80,7 @@ export default function SignIn() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(inputVals),
+          credentials: "include",
         });
         const data = await res.json();
         console.log(data);
