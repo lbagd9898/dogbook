@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 app.use("/auth", authRouter);
 
 app.listen(PORT, () => {
-  console.log("server running");
+  console.log(`server running on port ${PORT}`);
 });
 
 export default app;

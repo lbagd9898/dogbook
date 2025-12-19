@@ -82,11 +82,32 @@ export default function SignIn() {
           body: JSON.stringify(inputVals),
           credentials: "include",
         });
+        //error appears  in the console
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
         const data = await res.json();
         console.log(data);
       } catch (e) {
         console.log(e);
       }
+    }
+  };
+
+  const github = async (e) => {
+    e.preventDefault();
+    console.log("github triggered");
+    try {
+      const res = await fetch("http://localhost:3000/auth/github");
+
+      if (!res.ok) {
+        throw new Error(`HTTP ERROR ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log(data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -127,6 +148,9 @@ export default function SignIn() {
             <em>Or</em>
             <Button
               text="Sign in with Github"
+              onClick={() =>
+                (window.location.href = "http://localhost:3000/auth/github")
+              }
               theme="dark"
               icon={githubIcon}
             ></Button>

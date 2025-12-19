@@ -1,8 +1,10 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GithubStrategy } from "passport-github2";
 import { prisma } from "../prismaClient.js";
 import bcrypt from "bcryptjs";
 
+//local strategy
 passport.use(
   new LocalStrategy(
     { usernameField: "email", passwordField: "password" },
@@ -29,6 +31,20 @@ passport.use(
         console.log(e);
         return done(e);
       }
+    }
+  )
+);
+
+//github strategy
+passport.use(
+  new GithubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/github/callback",
+    },
+    (accessToken, refreshToken, profile, done) => {
+      return done(null, profile);
     }
   )
 );

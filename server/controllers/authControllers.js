@@ -97,3 +97,14 @@ export async function postLogIn(req, res, next) {
     return res.status(200).json({ message: "Login successful" });
   })(req, res, next);
 }
+
+export const getGithub = [
+  passport.authenticate("github", { scope: ["user:email"] }),
+];
+
+export const getGithubCallback = [
+  passport.authenticate("github", { failureRedirect: "/" }),
+  (req, res) => {
+    res.json({ message: " github authenticated" });
+  },
+];

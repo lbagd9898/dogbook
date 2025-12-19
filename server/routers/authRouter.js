@@ -3,6 +3,8 @@ import {
   validateSignUp,
   postSignUp,
   postLogIn,
+  getGithub,
+  getGithubCallback,
 } from "../controllers/authControllers.js";
 const authRouter = express.Router();
 
@@ -11,5 +13,7 @@ authRouter.get("/", (req, res) => {
 });
 authRouter.post("/sign-up", validateSignUp, postSignUp);
 authRouter.post("/log-in", postLogIn);
+authRouter.get("/github", getGithub);
+authRouter.get("/github/callback", getGithubCallback);
 
 export default authRouter;
