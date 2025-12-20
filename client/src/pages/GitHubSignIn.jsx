@@ -41,6 +41,7 @@ export default function GitHubSignIn() {
   const onSubmit = async (e) => {
     e.preventDefault();
     console.log("submitted");
+    //post to route to update user info
   };
 
   //re-populates error messages after the user types

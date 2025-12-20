@@ -118,3 +118,35 @@ export function getGithubCallback(req, res, next) {
     return res.redirect(`${process.env.CLIENT_URL}github`);
   })(req, res, next);
 }
+
+export function postLinkGithub(req, res, next) {
+  passport.authenticate("local", async (err, user, info) => {
+    if (err) return next(err);
+    if (!user) return res.status(401).json({ message: info.message });
+
+    if (!req.session.oauthLink?.githubId) {
+      return res.status(400).json({ message: "No GitHub account to link" });
+    }
+
+    try {
+      const githubId = req.session.oauthLink.githubId;
+
+      //link githubid to user
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { githubId },
+      });
+      //user exists and login is successful
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET
+      );
+      res.cookie("token", token, {
+        httpOnly: true,
+      });
+      return res.status(200).json({ message: "github account linked!" });
+    } catch (e) {
+      return next(e);
+    }
+  })(req, res, next);
+}
