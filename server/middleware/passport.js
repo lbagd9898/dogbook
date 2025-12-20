@@ -43,8 +43,23 @@ passport.use(
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL: "http://localhost:3000/auth/github/callback",
     },
-    (accessToken, refreshToken, profile, done) => {
-      return done(null, profile);
+    async function (accessToken, refreshToken, profile, done) {
+      try {
+        const user = await prisma.user.findUnique({
+          where: {
+            githubId: profile.id,
+          },
+        });
+        if (!user) {
+          return done(null, false, {
+            githubProfile: profile,
+          });
+        }
+        return done(null, user);
+      } catch (e) {
+        console.log(e);
+        return done(e);
+      }
     }
   )
 );

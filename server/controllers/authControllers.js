@@ -81,7 +81,7 @@ export async function postSignUp(req, res) {
   }
 }
 
-export async function postLogIn(req, res, next) {
+export function postLogIn(req, res, next) {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) return res.status(401).json({ message: info.message });
@@ -102,9 +102,19 @@ export const getGithub = [
   passport.authenticate("github", { scope: ["user:email"] }),
 ];
 
-export const getGithubCallback = [
-  passport.authenticate("github", { failureRedirect: "/" }),
-  (req, res) => {
-    res.json({ message: " github authenticated" });
-  },
-];
+export function getGithubCallback(req, res, next) {
+  passport.authenticate("github", (err, user, info) => {
+    if (err) return next(err);
+    if (user) {
+      return res.send("user found");
+    }
+    console.log(info.githubProfile.id);
+
+    req.session.oauthLink = {
+      provider: "github",
+      githubId: info.githubProfile.id,
+    };
+
+    return res.redirect(`${process.env.CLIENT_URL}github`);
+  })(req, res, next);
+}

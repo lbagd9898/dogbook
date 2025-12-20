@@ -94,23 +94,6 @@ export default function SignIn() {
     }
   };
 
-  const github = async (e) => {
-    e.preventDefault();
-    console.log("github triggered");
-    try {
-      const res = await fetch("http://localhost:3000/auth/github");
-
-      if (!res.ok) {
-        throw new Error(`HTTP ERROR ${res.status}`);
-      }
-
-      const data = await res.json();
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   //re-populates error messages after the user types
   function validate(values) {
     const errors = [];
