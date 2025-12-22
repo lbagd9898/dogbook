@@ -81,7 +81,7 @@ export default function SignUp() {
   const onSubmit = async (e) => {
     e.preventDefault();
     console.log("submitted");
-    if (errors.length === 0) {
+    if (errors.length === 0 && touched === true) {
       try {
         const res = await fetch("http://localhost:3000/auth/sign-up", {
           method: "POST",

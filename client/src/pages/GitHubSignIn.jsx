@@ -40,8 +40,32 @@ export default function GitHubSignIn() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted");
-    //post to route to update user info
+    console.log("clicked");
+    if (errors.length > 0 || touched == false) {
+      return;
+    }
+    console.log(inputVals);
+    try {
+      const res = await fetch("http://localhost:3000/auth/link-github", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputVals),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        console.log("success", data);
+      } else {
+        console.log("not success", data);
+        if (data.message) {
+          setErrors([data.message]);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   //re-populates error messages after the user types
@@ -68,6 +92,7 @@ export default function GitHubSignIn() {
               header={header}
               fields={fields}
               inputVals={inputVals}
+              onSubmit={onSubmit}
               onChange={handleChange}
               buttonText={buttonText}
             />

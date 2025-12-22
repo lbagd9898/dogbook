@@ -5,6 +5,7 @@ import {
   postLogIn,
   getGithub,
   getGithubCallback,
+  postLinkGithub,
 } from "../controllers/authControllers.js";
 const authRouter = express.Router();
 
@@ -15,5 +16,6 @@ authRouter.post("/sign-up", validateSignUp, postSignUp);
 authRouter.post("/log-in", postLogIn);
 authRouter.get("/github", getGithub);
 authRouter.get("/github/callback", getGithubCallback);
+authRouter.post("/link-github", postLinkGithub);
 
 export default authRouter;

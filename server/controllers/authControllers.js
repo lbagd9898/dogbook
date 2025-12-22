@@ -115,6 +115,7 @@ export function getGithubCallback(req, res, next) {
       githubId: info.githubProfile.id,
     };
 
+    console.log(req.session.oauthLink);
     return res.redirect(`${process.env.CLIENT_URL}github`);
   })(req, res, next);
 }
@@ -123,13 +124,15 @@ export function postLinkGithub(req, res, next) {
   passport.authenticate("local", async (err, user, info) => {
     if (err) return next(err);
     if (!user) return res.status(401).json({ message: info.message });
-
+    console.log(user);
+    console.log(req.session.oauthLink);
     if (!req.session.oauthLink?.githubId) {
       return res.status(400).json({ message: "No GitHub account to link" });
     }
 
     try {
       const githubId = req.session.oauthLink.githubId;
+      console.log(githubId);
 
       //link githubid to user
       await prisma.user.update({
@@ -144,7 +147,9 @@ export function postLinkGithub(req, res, next) {
       res.cookie("token", token, {
         httpOnly: true,
       });
-      return res.status(200).json({ message: "github account linked!" });
+      return res
+        .status(200)
+        .json({ message: "github account linked!", user: user });
     } catch (e) {
       return next(e);
     }
