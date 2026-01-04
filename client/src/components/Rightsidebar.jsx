@@ -1,4 +1,3 @@
-import pawprint from "../assets/icons/pawprint.svg";
 import wolf from "../assets/icons/wolf.svg";
 import wolfpack from "../assets/icons/wolfpack.svg";
 
