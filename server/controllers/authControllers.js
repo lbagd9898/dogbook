@@ -4,6 +4,9 @@ import bcrypt from "bcryptjs";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 
+//determines if we're in production for CORS cookie sending
+const isProduction = process.env.NODE_ENV === "production";
+
 export const validateSignUp = [
   body("username")
     .trim()
@@ -106,7 +109,16 @@ export function getGithubCallback(req, res, next) {
   passport.authenticate("github", (err, user, info) => {
     if (err) return next(err);
     if (user) {
-      return res.send("user found");
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET
+      );
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "strict" : "lax",
+      });
+      return res.redirect(`${process.env.CLIENT_URL}dashboard`);
     }
     console.log(info.githubProfile.id);
 
@@ -146,6 +158,8 @@ export function postLinkGithub(req, res, next) {
       );
       res.cookie("token", token, {
         httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "strict" : "lax",
       });
       return res
         .status(200)
@@ -154,4 +168,12 @@ export function postLinkGithub(req, res, next) {
       return next(e);
     }
   })(req, res, next);
+}
+
+export function postVerify(req, res) {
+  const user = req.user;
+  if (!user) {
+    return res.status(401);
+  }
+  return res.status(200);
 }
