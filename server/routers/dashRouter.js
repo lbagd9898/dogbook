@@ -1,5 +1,5 @@
 import express from "express";
-import verifyToken from "../middleware/jwtVerify";
+import verifyToken from "../middleware/jwtVerify.js";
 
 const dashRouter = express.Router();
 

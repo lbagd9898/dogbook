@@ -33,13 +33,7 @@ app.use(
 app.use(express.json());
 app.use(passport.initialize());
 
-const PORT = process.env.PORT || 3000;
-
 app.use("/auth", authRouter);
 app.use("/dash", dashRouter);
-
-app.listen(PORT, () => {
-  console.log(`server running on port ${PORT}`);
-});
 
 export default app;
