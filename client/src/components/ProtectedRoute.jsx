@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-export default function ProtectedRoute({ children }) {
+export default function ProtectedRoute() {
   const [isAuthorized, setIsAuthorized] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
+      console.log("protected route reached");
       try {
-        const res = await fetch("localhost:3000/auth/verify", {
+        const res = await fetch("http://localhost:3000/auth/verify", {
           method: "GET",
           credentials: "include", // important to send cookies
         });
 
         if (res.ok) {
+          console.log("okay response");
           setIsAuthorized(true);
         } else {
           setIsAuthorized(false);
@@ -27,7 +29,7 @@ export default function ProtectedRoute({ children }) {
   }, []);
 
   if (isAuthorized === null) return <p>Loading...</p>;
-  if (!isAuthorized) return <Navigate to="/login" replace />;
+  if (!isAuthorized) return <Navigate to="/" replace />;
 
-  return children;
+  if (isAuthorized === true) return <Outlet />;
 }

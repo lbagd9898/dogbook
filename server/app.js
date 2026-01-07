@@ -4,11 +4,14 @@ import authRouter from "./routers/authRouter.js";
 import passport from "./middleware/passport.js";
 import session from "express-session";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 //configure environment variables
 dotenv.config();
 
 const app = express();
+
+app.use(cookieParser());
 
 app.use(
   cors({

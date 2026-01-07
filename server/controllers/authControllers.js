@@ -109,14 +109,15 @@ export function getGithubCallback(req, res, next) {
   passport.authenticate("github", (err, user, info) => {
     if (err) return next(err);
     if (user) {
+      console.log("token issued");
       const token = jwt.sign(
         { id: user.id, username: user.username },
         process.env.JWT_SECRET
       );
       res.cookie("token", token, {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "strict" : "lax",
+        secure: false,
+        sameSite: "none",
       });
       return res.redirect(`${process.env.CLIENT_URL}dashboard`);
     }
@@ -158,8 +159,8 @@ export function postLinkGithub(req, res, next) {
       );
       res.cookie("token", token, {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "strict" : "lax",
+        secure: false,
+        sameSite: "none",
       });
       return res
         .status(200)
@@ -170,10 +171,11 @@ export function postLinkGithub(req, res, next) {
   })(req, res, next);
 }
 
-export function postVerify(req, res) {
+export function getVerify(req, res) {
   const user = req.user;
   if (!user) {
-    return res.status(401);
+    return res.sendStatus(401);
   }
-  return res.status(200);
+  console.log("user verified");
+  return res.sendStatus(200);
 }
