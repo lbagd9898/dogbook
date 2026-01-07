@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRouter from "./routers/authRouter.js";
+import dashRouter from "./routers/dashRouter.js";
 import passport from "./middleware/passport.js";
 import session from "express-session";
 import dotenv from "dotenv";
@@ -35,6 +36,7 @@ app.use(passport.initialize());
 const PORT = process.env.PORT || 3000;
 
 app.use("/auth", authRouter);
+app.use("/dash", dashRouter);
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);

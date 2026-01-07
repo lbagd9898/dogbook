@@ -2,7 +2,7 @@ import wolfpack from "../assets/icons/wolfpack.svg";
 import like from "../assets/icons/like.svg";
 import comment from "../assets/icons/comment.svg";
 
-export default function Post() {
+export default function Post(props) {
   return (
     <div className="group relative w-[40vw] pointer overflow-hidden cursor-pointer">
       {/* Shimmer Overlay */}
@@ -12,7 +12,7 @@ export default function Post() {
         <div>
           <div className="flex items-center gap-2">
             <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
-            <h1>Wolfy122</h1>
+            <h1>{props.authorId.username}</h1>
           </div>
           <em className="text-gray-600">Three hours ago</em>
         </div>

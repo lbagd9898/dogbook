@@ -4,9 +4,6 @@ import bcrypt from "bcryptjs";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 
-//determines if we're in production for CORS cookie sending
-const isProduction = process.env.NODE_ENV === "production";
-
 export const validateSignUp = [
   body("username")
     .trim()
@@ -116,7 +113,7 @@ export function getGithubCallback(req, res, next) {
       );
       res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: "none",
       });
       return res.redirect(`${process.env.CLIENT_URL}dashboard`);
@@ -159,7 +156,7 @@ export function postLinkGithub(req, res, next) {
       );
       res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: "none",
       });
       return res

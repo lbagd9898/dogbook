@@ -14,10 +14,6 @@ export default function Dashboard() {
             <img className="w-[1.5em] h-[1.5em]" src={pawprint} alt="" />
           </div>
           <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
         </div>
       </main>
       <Rightsidebar />
