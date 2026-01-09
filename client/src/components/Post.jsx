@@ -12,7 +12,7 @@ export default function Post(props) {
         <div>
           <div className="flex items-center gap-2">
             <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
-            <h1>{props.authorId.username}</h1>
+            <h1>{props.post.authorId.username}</h1>
           </div>
           <em className="text-gray-600">Three hours ago</em>
         </div>

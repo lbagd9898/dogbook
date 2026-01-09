@@ -6,4 +6,8 @@ module.exports = {
   },
   moduleFileExtensions: ["js", "jsx"],
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.js"], // optional RTL matchers
+  moduleNameMapper: {
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+    "\\.(svg|png|jpg|jpeg|gif|webp)$": "<rootDir>/__mocks__/fileMock.js",
+  },
 };

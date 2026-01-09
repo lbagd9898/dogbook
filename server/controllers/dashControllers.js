@@ -5,11 +5,22 @@ export async function getPosts(req, res) {
   if (!user) {
     return res.status(404).json({ error: "user not found" });
   }
-  console.log(user);
-  const posts = await prisma.post.findMany({
+  const following = await prisma.follow.findMany({
     where: {
-      authorId: user.id,
+      followerId: user.id,
     },
   });
+  console.log(following);
+  const followingIds = following.map((user) => user.id);
+  const somePosts = [];
+  for (let i = 0; i < followingIds.length; i++) {
+    const morePosts = await prisma.post.findMany({
+      where: {
+        authorId: followingIds[i],
+      },
+    });
+    somePosts.push(morePosts);
+  }
+  const posts = somePosts.flat();
   return res.status(200).json({ posts });
 }
