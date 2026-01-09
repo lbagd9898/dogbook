@@ -6,9 +6,9 @@ export async function getPosts(req, res) {
     return res.status(404).json({ error: "user not found" });
   }
   console.log(user);
-  const posts = await prisma.posts.findMany({
+  const posts = await prisma.post.findMany({
     where: {
-      userId: user.id,
+      authorId: user.id,
     },
   });
   return res.status(200).json({ posts });
