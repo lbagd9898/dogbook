@@ -11,16 +11,18 @@ export async function getPosts(req, res) {
     },
   });
   console.log(following);
-  const followingIds = following.map((user) => user.id);
-  const somePosts = [];
-  for (let i = 0; i < followingIds.length; i++) {
-    const morePosts = await prisma.post.findMany({
-      where: {
-        authorId: followingIds[i],
+  const followingIds = following.map((f) => f.followedId);
+
+  const posts = await prisma.post.findMany({
+    where: {
+      authorId: {
+        in: followingIds,
       },
-    });
-    somePosts.push(morePosts);
-  }
-  const posts = somePosts.flat();
+    },
+    orderBy: {
+      createdAt: "desc", // optional but usually expected
+    },
+  });
+
   return res.status(200).json({ posts });
 }
