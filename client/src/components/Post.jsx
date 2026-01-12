@@ -12,24 +12,16 @@ export default function Post(props) {
         <div>
           <div className="flex items-center gap-2">
             <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
-            <h1>{props.post.authorId.username}</h1>
+            <h1>{props.post.author}</h1>
           </div>
-          <em className="text-gray-600">Three hours ago</em>
+          <em className="text-gray-600">{props.post.date}</em>
         </div>
-        <h1 className="text-lg">This is the title of the Post.</h1>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </p>
+        <h1 className="text-lg">{props.post.title}</h1>
+        <p>{props.post.content}</p>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <img className="w-[1.5em] h-[1.5em]" src={like} alt="" />
-            <p>1</p>
+            <p>{props.post.likes}</p>
           </div>
           <div className="flex items-center gap-2">
             <img className="w-[1.5em] h-[1.5em]" src={comment} alt="" />
