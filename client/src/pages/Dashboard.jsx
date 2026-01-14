@@ -38,7 +38,7 @@ export default function Dashboard() {
   //change this to error component after designing
   if (error != null) return <p>{error}</p>;
   return (
-    <div className="grid grid-cols-[16rem_1fr_14rem] min-h-screen">
+    <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
       <main className="p-6 flex flex-col items-center h-screen overflow-y-auto">
         <div className="flex flex-col gap-4">
