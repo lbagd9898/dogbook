@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import pawprint from "../assets/icons/pawprint.svg";
 import Rightsidebar from "../components/Rightsidebar";
 import Post from "../components/Post";
+import Makepost from "../components/Makepost";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
@@ -46,6 +47,7 @@ export default function Dashboard() {
             <h1 className="text-lg md:text-xl lg:text-2xl">Your BarkFeed</h1>
             <img className="w-[1.5em] h-[1.5em]" src={pawprint} alt="" />
           </div>
+          <Makepost></Makepost>
           {posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}

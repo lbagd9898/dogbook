@@ -15,19 +15,19 @@ export default function Navbar() {
           alt=""
         />
       </div>
-      <button className="flex items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
+      <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
         <img className="w-[1em] h-[1em]" src={home} alt="" />
         <p className="hidden md:inline">Home</p>
       </button>
-      <button className="flex items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
+      <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
         <img className="w-[1em] h-[1em]" src={post} alt="" />
         <p className="hidden md:inline">Post</p>
       </button>
-      <button className="flex items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
+      <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
         <img className="w-[1em] h-[1em]" src={profile} alt="" />
         <p className="hidden md:inline">Profile</p>
       </button>
-      <button className="flex items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
+      <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
         <img className="w-[1em] h-[1em]" src={logout} alt="" />
         <p className="hidden md:inline">Logout</p>
       </button>
