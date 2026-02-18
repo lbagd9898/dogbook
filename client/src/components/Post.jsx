@@ -2,6 +2,7 @@ import wolfpack from "../assets/icons/wolfpack.svg";
 import { LikeIcon } from "../assets/icons/likeIcon";
 import comment from "../assets/icons/comment.svg";
 import { useState, useEffect, useRef } from "react";
+import Comment from "./Comment";
 
 export default function Post(props) {
   const [displayDate, setDisplayDate] = useState(props.post.date);
@@ -79,46 +80,51 @@ export default function Post(props) {
   }, []);
 
   return (
-    <div className="group relative lg:w-[40vw] xl:w-[50vw] pointer overflow-hidden cursor-pointer">
-      {/* Shimmer Overlay */}
-      <div className="absolute inset-0 w-[100%] bg-gradient-to-bl from-gray-100/10 via-gray-400/10 to-gray-800/20 top-0 left-0 -translate-x-full group-hover:translate-x-[0%] duration-700"></div>
-      {/* Post Content */}
-      <div className="border border-2 p-4 border-[#82C88F] rounded-md font-doggy flex flex-col gap-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100">
-        <div>
-          <div className="flex items-center gap-2">
-            <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
-            <h1 className="text-base md:text-lg lg:text-xl">
-              {props.post.author}
-            </h1>
+    <div className="lg:w-[40vw] xl:w-[50vw]">
+      <div className="group relative lg:w-[40vw] xl:w-[50vw] pointer overflow-hidden cursor-pointer">
+        {/* Shimmer Overlay */}
+        <div className="absolute inset-0 w-[100%] bg-gradient-to-bl from-gray-100/10 via-gray-400/10 to-gray-800/20 top-0 left-0 -translate-x-full group-hover:translate-x-[0%] duration-700"></div>
+        {/* Post Content */}
+        <div className="border border-2 p-4 border-[#82C88F] rounded-md font-doggy flex flex-col gap-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100">
+          <div>
+            <div className="flex items-center gap-2">
+              <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
+              <h1 className="text-base md:text-lg lg:text-xl">
+                {props.post.author}
+              </h1>
+            </div>
+            <em className="text-base md:text-lg lg:text-xl text-gray-600">
+              {displayDate}
+            </em>
           </div>
-          <em className="text-base md:text-lg lg:text-xl text-gray-600">
-            {displayDate}
-          </em>
-        </div>
-        <h1 className="text-lg md:text-xl lg:text-2xl">{props.post.title}</h1>
-        <p className="text-base md:text-lg lg:text-xl">{props.post.content}</p>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-1 z-10">
-            <button
-              className="hover:bg-pink-400 rounded-md p-1"
-              onClick={toggleLike}
-            >
-              <LikeIcon
-                active={liked}
-                className="w-[1.5em] h-[1.5em]"
-              ></LikeIcon>
-              {/* <img className="w-[1.5em] h-[1.5em]" src={like} alt="" /> */}
-            </button>
-            <p>{likeCount}</p>
-          </div>
-          <div className="flex items-center gap-1 z-10">
-            <button className="hover:bg-blue-400 rounded-md p-1">
-              <img className="w-[1.5em] h-[1.5em]" src={comment} alt="" />
-            </button>
-            <p>2</p>
+          <h1 className="text-lg md:text-xl lg:text-2xl">{props.post.title}</h1>
+          <p className="text-base md:text-lg lg:text-xl">
+            {props.post.content}
+          </p>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-1 z-10">
+              <button
+                className="hover:bg-pink-400 rounded-md p-1"
+                onClick={toggleLike}
+              >
+                <LikeIcon
+                  active={liked}
+                  className="w-[1.5em] h-[1.5em]"
+                ></LikeIcon>
+                {/* <img className="w-[1.5em] h-[1.5em]" src={like} alt="" /> */}
+              </button>
+              <p>{likeCount}</p>
+            </div>
+            <div className="flex items-center gap-1 z-10">
+              <button className="hover:bg-blue-400 rounded-md p-1">
+                <img className="w-[1.5em] h-[1.5em]" src={comment} alt="" />
+              </button>
+              <p>2</p>
+            </div>
           </div>
         </div>
       </div>
+      <Comment></Comment>
     </div>
   );
 }
