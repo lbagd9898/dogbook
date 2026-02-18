@@ -1,4 +1,3 @@
-import { get } from "http";
 import { prisma } from "../prismaClient.js";
 
 export async function getPosts(req, res) {
@@ -11,8 +10,13 @@ export async function getPosts(req, res) {
       followerId: user.id,
     },
   });
-  console.log(following);
+
+  // console.log(following);
+
   const followingIds = following.map((f) => f.followedId);
+
+  //user should see their own posts too
+  followingIds.push(user.id);
 
   const posts = await prisma.post.findMany({
     where: {
@@ -28,16 +32,17 @@ export async function getPosts(req, res) {
   const likes = await getLikes(postIds);
   const authors = await getAuthors(followingIds);
 
-  console.log(likes);
-  console.log(authors);
-  console.log(posts);
+  // console.log(likes);
+  // console.log(authors);
+  // console.log(posts);
+
   const detailedPosts = posts.map((post) => ({
     ...post,
     likes: likes[post.id],
     author: authors[post.authorId],
   }));
 
-  console.log(detailedPosts);
+  // console.log(detailedPosts);
 
   return res.status(200).json({ posts: detailedPosts });
 }
@@ -73,4 +78,70 @@ async function getAuthors(authorIds) {
     return acc;
   }, {});
   return authorKeys;
+}
+
+export async function postPost(req, res) {
+  console.log(req.body);
+  //access post content from form
+  const title = req.body.title;
+  const content = req.body.content;
+
+  //user comes from jwtverify
+  const user = req.user;
+  console.log(user);
+  if (!user) {
+    return res.status(404).json({ error: "user not found" });
+  }
+
+  //create post
+  try {
+    const newPost = await prisma.post.create({
+      data: {
+        title,
+        content,
+        authorId: user.id,
+      },
+    });
+    console.log(newPost);
+    return res.status(201).json({ newPost });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "Database error" });
+  }
+}
+
+export async function postUpdateLikes(req, res) {
+  console.log("updatelikes reached");
+  const { postId, liked } = req.body;
+  const userId = req.user?.id;
+  console.log(req.body);
+  console.log(req.user);
+  try {
+    //if user liked post, add it to likes db
+    if (liked) {
+      const newLike = await prisma.like.create({
+        data: {
+          userId,
+          postId,
+        },
+      });
+      res.status(201).json(newLike);
+    } else {
+      //if user unlikes post
+      const deleteLike = await prisma.like.deleteMany({
+        where: {
+          userId,
+          postId,
+        },
+      });
+      //if they can't find the like, notify client
+      if (deleteLike.count === 0) {
+        return res.status(404).json({ message: "like not found." });
+      }
+      res.status(200).json({ message: "like deleted" });
+    }
+  } catch (e) {
+    console.error(e);
+    res.send(500).json({ message: "internal server error" });
+  }
 }

@@ -1,10 +1,50 @@
 import wolfpack from "../assets/icons/wolfpack.svg";
-import like from "../assets/icons/like.svg";
+import { LikeIcon } from "../assets/icons/likeIcon";
 import comment from "../assets/icons/comment.svg";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Post(props) {
   const [displayDate, setDisplayDate] = useState(props.post.date);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(props.post.likes || 0);
+
+  const hasMounted = useRef(false);
+
+  function toggleLike() {
+    setLiked(!liked);
+    setLikeCount((prev) => prev + (liked ? -1 : 1));
+    hasMounted.current = true;
+  }
+
+  useEffect(() => {
+    if (!hasMounted.current) {
+      console.log("hasnt mounted");
+      return;
+    }
+
+    const updateLikes = async () => {
+      try {
+        console.log("update likes");
+        const res = await fetch("http://localhost:3000/dash/update-likes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ liked, postId: props.post.id }),
+          credentials: "include",
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        console.log(data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    updateLikes();
+  }, [likeCount]);
 
   useEffect(() => {
     const updateDate = (date) => {
@@ -37,6 +77,7 @@ export default function Post(props) {
     const date = updateDate(props.post.date);
     setDisplayDate(date);
   }, []);
+
   return (
     <div className="group relative lg:w-[40vw] xl:w-[50vw] pointer overflow-hidden cursor-pointer">
       {/* Shimmer Overlay */}
@@ -57,12 +98,23 @@ export default function Post(props) {
         <h1 className="text-lg md:text-xl lg:text-2xl">{props.post.title}</h1>
         <p className="text-base md:text-lg lg:text-xl">{props.post.content}</p>
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <img className="w-[1.5em] h-[1.5em]" src={like} alt="" />
-            <p>{props.post.likes}</p>
+          <div className="flex items-center gap-1 z-10">
+            <button
+              className="hover:bg-pink-400 rounded-md p-1"
+              onClick={toggleLike}
+            >
+              <LikeIcon
+                active={liked}
+                className="w-[1.5em] h-[1.5em]"
+              ></LikeIcon>
+              {/* <img className="w-[1.5em] h-[1.5em]" src={like} alt="" /> */}
+            </button>
+            <p>{likeCount}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <img className="w-[1.5em] h-[1.5em]" src={comment} alt="" />
+          <div className="flex items-center gap-1 z-10">
+            <button className="hover:bg-blue-400 rounded-md p-1">
+              <img className="w-[1.5em] h-[1.5em]" src={comment} alt="" />
+            </button>
             <p>2</p>
           </div>
         </div>

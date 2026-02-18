@@ -10,6 +10,39 @@ export default function Dashboard() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
 
+  const [postInput, setPostInput] = useState({ title: "", content: "" });
+
+  function handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    setPostInput((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    //send form data to the server
+    console.log("sending post data to server");
+    try {
+      const res = await fetch("http://localhost:3000/dash/new-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postInput),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setPosts((prev) => [data.newPost, ...prev]);
+
+      setPostInput({ title: "", content: "" });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   useEffect(() => {
     const loadPosts = async () => {
       console.log("loading posts");
@@ -47,7 +80,11 @@ export default function Dashboard() {
             <h1 className="text-lg md:text-xl lg:text-2xl">Your BarkFeed</h1>
             <img className="w-[1.5em] h-[1.5em]" src={pawprint} alt="" />
           </div>
-          <Makepost></Makepost>
+          <Makepost
+            postInput={postInput}
+            handleChange={handleChange}
+            onSubmit={onSubmit}
+          ></Makepost>
           {posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}
