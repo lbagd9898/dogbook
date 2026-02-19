@@ -8,11 +8,15 @@ export default function Post(props) {
   const [displayDate, setDisplayDate] = useState(props.post.date);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(props.post.likes || 0);
+  // const [visibleCommentCount, setVisibleCommentCount] = useState(2);
   const [visibleCommentCount, setVisibleCommentCount] = useState(2);
-  const [visibleComments, setVisibleComments] = useState([]);
   const [userComment, setUserComment] = useState("");
 
   const hasMounted = useRef(false);
+  //derives visible comments from count
+  const visibleComments = props.post.comments?.slice(
+    -visibleCommentCount || []
+  );
 
   //variable keeps track of if we need the showcomment button or not
   const showCommentsButton =
@@ -20,7 +24,6 @@ export default function Post(props) {
 
   async function postComment(e) {
     e.preventDefault();
-
     console.log("sending comment to server");
     try {
       const res = await fetch("http://localhost:3000/dash/post-comment", {
@@ -36,8 +39,7 @@ export default function Post(props) {
       }
       const data = await res.json();
       console.log(data);
-      setVisibleComments((prev) => [...prev, data.resComment]);
-      setVisibleCommentCount((prev) => prev + 1);
+      visibleComments.push(data.resComment);
     } catch (e) {
       console.error(e);
     }
@@ -54,11 +56,9 @@ export default function Post(props) {
     hasMounted.current = true;
   }
 
-  //set visible comments
-  useEffect(() => {
-    setVisibleComments(props.post.comments?.slice(-visibleCommentCount) || []);
-    console.log(visibleComments);
-  }, [visibleCommentCount]);
+  function addComments() {
+    setVisibleCommentCount((prev) => prev + 2);
+  }
 
   useEffect(() => {
     if (!hasMounted.current) {
@@ -169,10 +169,7 @@ export default function Post(props) {
       </div>
       {showCommentsButton && (
         <div className="px-4 py-1 shadow-md bg-gradient-to-br from-slate-50 to-slate-100 font-doggy text-gray-500 border-2 border-transparent hover:border-solid hover:border-gray-300 transition-all duration-500">
-          <button
-            onClick={() => setVisibleCommentCount(visibleCommentCount + 2)}
-            className="w-full text-left"
-          >
+          <button onClick={addComments} className="w-full text-left">
             View More Comments
           </button>
         </div>
