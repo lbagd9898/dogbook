@@ -10,11 +10,43 @@ export default function Post(props) {
   const [likeCount, setLikeCount] = useState(props.post.likes || 0);
   const [visibleCommentCount, setVisibleCommentCount] = useState(2);
   const [visibleComments, setVisibleComments] = useState([]);
+  const [userComment, setUserComment] = useState("");
 
   const hasMounted = useRef(false);
 
+  //variable keeps track of if we need the showcomment button or not
   const showCommentsButton =
     props.post.comments && visibleCommentCount < props.post.comments.length;
+
+  async function postComment(e) {
+    e.preventDefault();
+
+    console.log("sending comment to server");
+    try {
+      const res = await fetch("http://localhost:3000/dash/post-comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userComment, postId: props.post.id }),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error("HTTP ERROR");
+      }
+      const data = await res.json();
+      console.log(data);
+      setVisibleComments((prev) => [...prev, data.resComment]);
+      setVisibleCommentCount((prev) => prev + 1);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function onChange(e) {
+    setUserComment(e.target.value);
+    console.log(userComment);
+  }
 
   function toggleLike() {
     setLiked(!liked);
@@ -25,6 +57,7 @@ export default function Post(props) {
   //set visible comments
   useEffect(() => {
     setVisibleComments(props.post.comments?.slice(-visibleCommentCount) || []);
+    console.log(visibleComments);
   }, [visibleCommentCount]);
 
   useEffect(() => {
@@ -149,10 +182,16 @@ export default function Post(props) {
         <Comment key={comment.id} comment={comment}></Comment>
       ))}
       <div className="px-4 py-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100 font-doggy">
-        <form className="flex gap-2 items-center" action="POST">
+        <form
+          className="flex gap-2 items-center"
+          action="POST"
+          onSubmit={postComment}
+        >
           <textarea
             className="resize-none overflow-y-auto min-h-[2.5rem] max-h-[7.5rem] flex-1 border-grey border bg-white rounded p-1 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400"
             rows={1}
+            onChange={onChange}
+            value={userComment}
             placeholder="Add a comment..."
             type="text"
           />

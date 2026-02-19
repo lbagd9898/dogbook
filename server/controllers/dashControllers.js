@@ -187,6 +187,39 @@ export async function postUpdateLikes(req, res) {
     }
   } catch (e) {
     console.error(e);
-    res.send(500).json({ message: "internal server error" });
+    res.status(500).json({ message: "internal server error" });
+  }
+}
+
+export async function postComment(req, res) {
+  console.log("post comment reached");
+  //get user from verifytoken and make sure user exists
+  const user = req.user;
+  if (!user) {
+    return res.status(404).json({ error: "user not found" });
+  }
+  try {
+    const content = req.body.userComment;
+    const postId = req.body.postId;
+    const authorId = req.user.id;
+    const comment = await prisma.comment.create({
+      data: {
+        content,
+        authorId,
+        postId,
+      },
+    });
+
+    const resComment = {
+      ...comment,
+      author: req.user.username,
+    };
+
+    console.log(resComment);
+
+    return res.status(201).json({ resComment });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ message: "failed to post comment" });
   }
 }

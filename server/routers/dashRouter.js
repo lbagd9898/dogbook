@@ -4,6 +4,7 @@ import {
   getPosts,
   postPost,
   postUpdateLikes,
+  postComment,
 } from "../controllers/dashControllers.js";
 
 const dashRouter = express.Router();
@@ -14,5 +15,6 @@ dashRouter.get("/", (req, res) => {
 dashRouter.get("/get-posts", verifyToken, getPosts);
 dashRouter.post("/new-post", verifyToken, postPost);
 dashRouter.post("/update-likes", verifyToken, postUpdateLikes);
+dashRouter.post("/post-comment", verifyToken, postComment);
 
 export default dashRouter;
