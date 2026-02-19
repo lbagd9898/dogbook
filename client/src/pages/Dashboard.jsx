@@ -55,7 +55,7 @@ export default function Dashboard() {
           throw new Error("Failed to fetch posts.");
         }
         const data = await res.json();
-        console.log(data);
+        console.log("post data", data);
         setPosts(data.posts);
       } catch (error) {
         console.log(error);

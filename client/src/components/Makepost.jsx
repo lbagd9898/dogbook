@@ -18,7 +18,7 @@ export default function Makepost(props) {
           placeholder="Title your post..."
           value={props.postInput.title}
           onChange={props.handleChange}
-          className="w-full border-grey border bg-white rounded p-1 shadow-md"
+          className="w-full border-grey border bg-white rounded p-1 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <textarea
           type="text"
@@ -26,7 +26,7 @@ export default function Makepost(props) {
           placeholder="What's on your mind?"
           value={props.postInput.content}
           onChange={props.handleChange}
-          className="w-full border-grey border bg-white rounded p-1 shadow-md mt-2"
+          className="w-full border-grey border bg-white rounded p-1 shadow-md mt-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <div className="w-full flex justify-end items-center">
           <button

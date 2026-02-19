@@ -13,6 +13,7 @@ export async function getPosts(req, res) {
 
   // console.log(following);
 
+  //list of ids for everybody the user follows
   const followingIds = following.map((f) => f.followedId);
 
   //user should see their own posts too
@@ -31,6 +32,7 @@ export async function getPosts(req, res) {
   const postIds = posts.map((post) => post.id);
   const likes = await getLikes(postIds);
   const authors = await getAuthors(followingIds);
+  const comments = await getComments(postIds);
 
   // console.log(likes);
   // console.log(authors);
@@ -40,11 +42,54 @@ export async function getPosts(req, res) {
     ...post,
     likes: likes[post.id],
     author: authors[post.authorId],
+    comments: comments[post.id],
   }));
 
-  // console.log(detailedPosts);
+  console.log(detailedPosts);
 
   return res.status(200).json({ posts: detailedPosts });
+}
+
+//returns an object with comments for each post
+export async function getComments(postIds) {
+  const comments = await prisma.comment.findMany({
+    where: {
+      postId: {
+        in: postIds,
+      },
+    },
+    orderBy: {
+      date: "asc",
+    },
+  });
+
+  console.log(comments);
+
+  const authorIds = comments.map((comment) => comment.authorId);
+
+  console.log(authorIds);
+
+  const authors = await getAuthors(authorIds);
+
+  console.log(authors);
+
+  const updatedComments = comments.map((comment) => ({
+    ...comment,
+    author: authors[comment.authorId],
+  }));
+
+  console.log(updatedComments);
+
+  const organizedComments = updatedComments.reduce((acc, comment) => {
+    if (!acc[comment.postId]) {
+      acc[comment.postId] = [comment];
+    } else {
+      acc[comment.postId].push(comment);
+    }
+    return acc;
+  }, {});
+
+  return organizedComments;
 }
 
 async function getLikes(postIds) {

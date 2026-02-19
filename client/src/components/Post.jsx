@@ -8,14 +8,24 @@ export default function Post(props) {
   const [displayDate, setDisplayDate] = useState(props.post.date);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(props.post.likes || 0);
+  const [visibleCommentCount, setVisibleCommentCount] = useState(2);
+  const [visibleComments, setVisibleComments] = useState([]);
 
   const hasMounted = useRef(false);
+
+  const showCommentsButton =
+    props.post.comments && visibleCommentCount < props.post.comments.length;
 
   function toggleLike() {
     setLiked(!liked);
     setLikeCount((prev) => prev + (liked ? -1 : 1));
     hasMounted.current = true;
   }
+
+  //set visible comments
+  useEffect(() => {
+    setVisibleComments(props.post.comments?.slice(-visibleCommentCount) || []);
+  }, [visibleCommentCount]);
 
   useEffect(() => {
     if (!hasMounted.current) {
@@ -124,7 +134,36 @@ export default function Post(props) {
           </div>
         </div>
       </div>
-      <Comment></Comment>
+      {showCommentsButton && (
+        <div className="px-4 py-1 shadow-md bg-gradient-to-br from-slate-50 to-slate-100 font-doggy text-gray-500 border-2 border-transparent hover:border-solid hover:border-gray-300 transition-all duration-500">
+          <button
+            onClick={() => setVisibleCommentCount(visibleCommentCount + 2)}
+            className="w-full text-left"
+          >
+            View More Comments
+          </button>
+        </div>
+      )}
+
+      {visibleComments?.map((comment) => (
+        <Comment key={comment.id} comment={comment}></Comment>
+      ))}
+      <div className="px-4 py-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100 font-doggy">
+        <form className="flex gap-2 items-center" action="POST">
+          <textarea
+            className="resize-none overflow-y-auto min-h-[2.5rem] max-h-[7.5rem] flex-1 border-grey border bg-white rounded p-1 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            rows={1}
+            placeholder="Add a comment..."
+            type="text"
+          />
+          <button
+            type="submit"
+            className="bg-[#99D49F] hover:bg-[#6DB77A] py-1 px-2 rounded"
+          >
+            Send
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
