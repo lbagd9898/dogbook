@@ -23,7 +23,8 @@ export default function Post(props) {
   async function postComment(e) {
     e.preventDefault();
     if (userComment === "" || userComment.trim() === "") {
-      console.log("cant post empty");
+      console.log("empty");
+      props.toggleFormError("Can't post empty comment.");
       return;
     }
     const maxLength = 1000;

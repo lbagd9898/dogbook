@@ -12,6 +12,13 @@ export default function Dashboard() {
 
   const [postInput, setPostInput] = useState({ title: "", content: "" });
 
+  const [formError, setFormError] = useState("");
+
+  function toggleFormError(error) {
+    setFormError(error);
+    setTimeout(() => setFormError(""), 3000);
+  }
+
   function handleChange(e) {
     const name = e.target.name;
     const value = e.target.value;
@@ -73,6 +80,16 @@ export default function Dashboard() {
   if (error != null) return <p>{error}</p>;
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
+      {formError && (
+        <div
+          className={`fixed top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
+        text-red-800 px-4 py-2 
+        rounded-md shadow-md 
+        transition-opacity duration-700 ${formError ? "opacity-100" : "opacity-0"}`}
+        >
+          {formError}
+        </div>
+      )}
       <Navbar />
       <main className="p-6 flex flex-col items-center h-screen overflow-y-auto">
         <div className="flex flex-col gap-4">
@@ -86,7 +103,7 @@ export default function Dashboard() {
             onSubmit={onSubmit}
           ></Makepost>
           {posts.map((post) => (
-            <Post key={post.id} post={post} />
+            <Post key={post.id} post={post} toggleFormError={toggleFormError} />
           ))}
         </div>
       </main>
