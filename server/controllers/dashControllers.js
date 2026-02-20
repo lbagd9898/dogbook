@@ -11,8 +11,6 @@ export async function getPosts(req, res) {
     },
   });
 
-  // console.log(following);
-
   //list of ids for everybody the user follows
   const followingIds = following.map((f) => f.followedId);
 
@@ -34,10 +32,6 @@ export async function getPosts(req, res) {
   const authors = await getAuthors(followingIds);
   const comments = await getComments(postIds);
 
-  // console.log(likes);
-  // console.log(authors);
-  // console.log(posts);
-
   const detailedPosts = posts.map((post) => ({
     ...post,
     likes: likes[post.id],
@@ -45,7 +39,7 @@ export async function getPosts(req, res) {
     comments: comments[post.id],
   }));
 
-  console.log(detailedPosts);
+  // console.log(detailedPosts);
 
   return res.status(200).json({ posts: detailedPosts });
 }
@@ -61,26 +55,19 @@ export async function getComments(postIds) {
     orderBy: {
       date: "asc",
     },
+    include: {
+      author: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
+    },
   });
 
   console.log(comments);
 
-  const authorIds = comments.map((comment) => comment.authorId);
-
-  console.log(authorIds);
-
-  const authors = await getAuthors(authorIds);
-
-  console.log(authors);
-
-  const updatedComments = comments.map((comment) => ({
-    ...comment,
-    author: authors[comment.authorId],
-  }));
-
-  console.log(updatedComments);
-
-  const organizedComments = updatedComments.reduce((acc, comment) => {
+  const organizedComments = comments.reduce((acc, comment) => {
     if (!acc[comment.postId]) {
       acc[comment.postId] = [comment];
     } else {
@@ -210,14 +197,28 @@ export async function postComment(req, res) {
       },
     });
 
-    const resComment = {
-      ...comment,
-      author: req.user.username,
-    };
+    console.log(comment);
 
-    console.log(resComment);
+    const allComments = await prisma.comment.findMany({
+      where: {
+        postId: postId,
+      },
+      orderBy: {
+        date: "asc",
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
 
-    return res.status(201).json({ resComment });
+    console.log(allComments);
+
+    return res.status(201).json({ allComments });
   } catch (e) {
     console.log(e);
     return res.status(500).json({ message: "failed to post comment" });

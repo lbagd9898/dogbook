@@ -10,21 +10,27 @@ export default function Post(props) {
   const [likeCount, setLikeCount] = useState(props.post.likes || 0);
   // const [visibleCommentCount, setVisibleCommentCount] = useState(2);
   const [visibleCommentCount, setVisibleCommentCount] = useState(2);
+  const [comments, setComments] = useState(props.post.comments || []);
   const [userComment, setUserComment] = useState("");
 
   const hasMounted = useRef(false);
   //derives visible comments from count
-  const visibleComments = props.post.comments?.slice(
-    -visibleCommentCount || []
-  );
+  const visibleComments = comments?.slice(-visibleCommentCount || []);
 
   //variable keeps track of if we need the showcomment button or not
-  const showCommentsButton =
-    props.post.comments && visibleCommentCount < props.post.comments.length;
+  const showCommentsButton = comments && visibleCommentCount < comments.length;
 
   async function postComment(e) {
     e.preventDefault();
-    console.log("sending comment to server");
+    if (userComment === "" || userComment.trim() === "") {
+      console.log("cant post empty");
+      return;
+    }
+    const maxLength = 1000;
+    if (userComment.length > maxLength) {
+      console.log("too long");
+      return;
+    }
     try {
       const res = await fetch("http://localhost:3000/dash/post-comment", {
         method: "POST",
@@ -39,7 +45,9 @@ export default function Post(props) {
       }
       const data = await res.json();
       console.log(data);
-      visibleComments.push(data.resComment);
+      setComments(data.allComments);
+      setVisibleCommentCount((prev) => prev + 1);
+      setUserComment("");
     } catch (e) {
       console.error(e);
     }
@@ -47,7 +55,6 @@ export default function Post(props) {
 
   function onChange(e) {
     setUserComment(e.target.value);
-    console.log(userComment);
   }
 
   function toggleLike() {
@@ -159,10 +166,10 @@ export default function Post(props) {
               <p>{likeCount}</p>
             </div>
             <div className="flex items-center gap-1 z-10">
-              <button className="hover:bg-blue-400 rounded-md p-1">
+              <button className="rounded-md p-1">
                 <img className="w-[1.5em] h-[1.5em]" src={comment} alt="" />
               </button>
-              <p>2</p>
+              <p>{props.post.comments?.length || 0}</p>
             </div>
           </div>
         </div>
