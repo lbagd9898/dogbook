@@ -12,11 +12,16 @@ export default function Dashboard() {
 
   const [postInput, setPostInput] = useState({ title: "", content: "" });
 
+  //shows error alert if user hasn't enterred valid form data
   const [formError, setFormError] = useState("");
+  const [showError, setShowError] = useState(false);
 
   function toggleFormError(error) {
     setFormError(error);
-    setTimeout(() => setFormError(""), 3000);
+    setShowError(true);
+
+    setTimeout(() => setShowError(false), 3000);
+    setTimeout(() => setFormError(""), 3700);
   }
 
   function handleChange(e) {
@@ -27,7 +32,30 @@ export default function Dashboard() {
 
   async function onSubmit(e) {
     e.preventDefault();
-    //send form data to the server
+    //validate form title and content
+    if (postInput.title.trim() === "") {
+      toggleFormError("Post must have a title.");
+      return;
+    }
+    if (postInput.title.trim().length < 3) {
+      toggleFormError("Title must be at least 3 characters long.");
+      return;
+    }
+    if (postInput.title.trim().length > 30) {
+      toggleFormError("Title cannot exceed 30 characters.");
+      return;
+    }
+    // CONTENT VALIDATION
+    if (postInput.content.trim() === "") {
+      toggleFormError("Post must include content.");
+      return;
+    }
+    const maxContentLength = 1500; // adjust if needed
+    if (postInput.content.trim().length > maxContentLength) {
+      toggleFormError(`Content cannot exceed ${maxContentLength} characters.`);
+      return;
+    }
+    //send form data to the server if everything looks good
     console.log("sending post data to server");
     try {
       const res = await fetch("http://localhost:3000/dash/new-post", {
@@ -80,16 +108,14 @@ export default function Dashboard() {
   if (error != null) return <p>{error}</p>;
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
-      {formError && (
-        <div
-          className={`fixed top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
+      <div
+        className={`fixed top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
         text-red-800 px-4 py-2 
         rounded-md shadow-md 
-        transition-opacity duration-700 ${formError ? "opacity-100" : "opacity-0"}`}
-        >
-          {formError}
-        </div>
-      )}
+        transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}
+      >
+        {formError}
+      </div>
       <Navbar />
       <main className="p-6 flex flex-col items-center h-screen overflow-y-auto">
         <div className="flex flex-col gap-4">
