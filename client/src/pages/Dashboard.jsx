@@ -117,7 +117,7 @@ export default function Dashboard() {
         {formError}
       </div>
       <Navbar />
-      <main className="p-6 flex flex-col items-center h-screen overflow-y-auto">
+      <main className="p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
         <div className="flex flex-col gap-4">
           <div className="flex gap-2 items-center font-doggy">
             <h1 className="text-lg md:text-xl lg:text-2xl">Your BarkFeed</h1>

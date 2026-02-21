@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRouter from "./routers/authRouter.js";
 import dashRouter from "./routers/dashRouter.js";
+import userRouter from "./routers/userRouter.js";
 import passport from "./middleware/passport.js";
 import session from "express-session";
 import dotenv from "dotenv";
@@ -35,5 +36,6 @@ app.use(passport.initialize());
 
 app.use("/auth", authRouter);
 app.use("/dash", dashRouter);
+app.use("/user", userRouter);
 
 export default app;

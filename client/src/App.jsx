@@ -4,6 +4,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import GitHubSignIn from "./pages/GitHubSignIn";
 import Dashboard from "./pages/Dashboard";
+import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
+        <Route path="/user-profile" element={<UserProfile />} />
       </Routes>
     </>
   );
