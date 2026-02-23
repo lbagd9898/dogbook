@@ -55,6 +55,7 @@ async function getUserPosts(userId) {
       author: {
         select: {
           username: true,
+          id: true,
         },
       },
     },
@@ -72,7 +73,6 @@ async function getUserPosts(userId) {
     ...post,
     likes: likes[post.id],
     comments: comments[post.id],
-    author: post.author.username,
   }));
   return detailedPosts;
 }

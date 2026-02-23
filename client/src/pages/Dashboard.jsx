@@ -17,6 +17,9 @@ export default function Dashboard() {
   const [showError, setShowError] = useState(false);
 
   function toggleFormError(error) {
+    //if error already showing ignore
+    if (showError) return;
+    //set show error
     setFormError(error);
     setShowError(true);
 
@@ -108,16 +111,16 @@ export default function Dashboard() {
   if (error != null) return <p>{error}</p>;
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
-      <div
-        className={`fixed top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
+      <Navbar />
+      <main className="relative p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+        <div
+          className={`absolute top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
         text-red-800 px-4 py-2 
         rounded-md shadow-md 
         transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}
-      >
-        {formError}
-      </div>
-      <Navbar />
-      <main className="p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+        >
+          {formError}
+        </div>
         <div className="flex flex-col gap-4">
           <div className="flex gap-2 items-center font-doggy">
             <h1 className="text-lg md:text-xl lg:text-2xl">Your BarkFeed</h1>

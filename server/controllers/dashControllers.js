@@ -23,19 +23,25 @@ export async function getPosts(req, res) {
         in: followingIds,
       },
     },
+    include: {
+      author: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
+    },
     orderBy: {
       date: "desc", // optional but usually expected
     },
   });
   const postIds = posts.map((post) => post.id);
   const likes = await getLikes(postIds);
-  const authors = await getAuthors(followingIds);
   const comments = await getComments(postIds);
 
   const detailedPosts = posts.map((post) => ({
     ...post,
     likes: likes[post.id],
-    author: authors[post.authorId],
     comments: comments[post.id],
   }));
 
@@ -95,21 +101,6 @@ export async function getLikes(postIds) {
     return acc;
   }, {});
   return likeCount;
-}
-
-async function getAuthors(authorIds) {
-  const authors = await prisma.user.findMany({
-    where: {
-      id: {
-        in: authorIds,
-      },
-    },
-  });
-  const authorKeys = authors.reduce((acc, user) => {
-    acc[user.id] = user.username;
-    return acc;
-  }, {});
-  return authorKeys;
 }
 
 export async function postPost(req, res) {

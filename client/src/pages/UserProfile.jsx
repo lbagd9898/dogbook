@@ -16,6 +16,9 @@ function UserProfile() {
   const [showError, setShowError] = useState(false);
 
   function toggleFormError(error) {
+    //if error already showing ignore
+    if (showError) return;
+    //set show error
     setFormError(error);
     setShowError(true);
 
@@ -53,33 +56,39 @@ function UserProfile() {
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
-      <main className="p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+      <main className="p-6 relative flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+        <div
+          className={`absolute top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
+        text-red-800 px-4 py-2 
+        rounded-md shadow-md 
+        transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}
+        >
+          {formError}
+        </div>
         <div className="flex flex-col gap-4 font-doggy lg:w-[40vw] xl:w-[50vw]">
           <div className="p-3 flex flex-col gap-4 rounded border border-2 border-[#82C88F] bg-white">
-            <div className="flex gap-3">
-              <div className="flex flex-1 p-4 text-lg rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
+            <div className="flex gap-3 text-md md:text-xl">
+              <div className="flex flex-1 p-1 md:p-2 lg:p-4 rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
                 <div>{user.followers}</div>
                 <div>Followers</div>
               </div>
-              <div className="flex flex-1 p-4 text-lg rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
+              <div className="flex flex-1 p-1 md:p-2 lg:p-4 rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
                 <div>{user.following}</div>
                 <div>Following</div>
               </div>
-              <div className="flex flex-1 p-4 text-lg rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
+              <div className="flex flex-1 p-1 md:p-2 lg:p-4 rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
                 <div>{posts.length}</div>
                 <div>Posts</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 px-10">
-              <div className="flex flex-1 items-center justify-start gap-3">
-                <img className="w-[5em] h-[5em]" src={wolfpack} alt="" />
-                <div className="flex flex-col">
-                  <p className="text-2xl">{user.username}</p>
-                </div>
+            <div className="flex flex-col md:flex-row items-center gap-3 px-10">
+              <div className="flex flex-1 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
+                <img className="w-[4em] h-[4em]" src={wolfpack} alt="" />
+                <p>{user.username}</p>
               </div>
-              <div className="flex-1 flex justify-end">
+              <div className="flex-1 flex justify-end text-md md:text-lg lg:text-xl">
                 <button
-                  className="bg-[#82C88F] px-4 py-2 shadow-md text-lg rounded-lg border-2 border-black hover:bg-[#6fb97c]
+                  className="bg-[#82C88F] px-4 py-2 shadow-md rounded-lg border-2 border-black hover:bg-[#6fb97c]
                    hover:shadow-lg active:scale-95 transition-all duration-150 ease-out"
                 >
                   Follow

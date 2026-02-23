@@ -3,6 +3,7 @@ import { LikeIcon } from "../assets/icons/likeIcon";
 import comment from "../assets/icons/comment.svg";
 import { useState, useEffect, useRef } from "react";
 import Comment from "./Comment";
+import { Link } from "react-router-dom";
 
 export default function Post(props) {
   const [displayDate, setDisplayDate] = useState(props.post.date);
@@ -134,16 +135,18 @@ export default function Post(props) {
     <div className="lg:w-[40vw] xl:w-[50vw]">
       <div className="group relative lg:w-[40vw] xl:w-[50vw] pointer overflow-hidden cursor-pointer">
         {/* Shimmer Overlay */}
-        <div className="absolute inset-0 w-[100%] bg-gradient-to-bl from-gray-100/10 via-gray-400/10 to-gray-800/20 top-0 left-0 -translate-x-full group-hover:translate-x-[0%] duration-700"></div>
+        <div className="pointer-events-none absolute inset-0 w-[100%] bg-gradient-to-bl from-gray-100/10 via-gray-400/10 to-gray-800/20 top-0 left-0 -translate-x-full group-hover:translate-x-[0%] duration-700"></div>
         {/* Post Content */}
         <div className="border border-2 p-4 border-[#82C88F] rounded-md font-doggy flex flex-col gap-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100">
           <div>
-            <div className="flex items-center gap-2">
-              <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
-              <h1 className="text-base md:text-lg lg:text-xl">
-                {props.post.author}
-              </h1>
-            </div>
+            <Link to={`/user/${props.post.author.id}`}>
+              <div className="flex items-center gap-2 cursor-pointer z-10">
+                <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
+                <h1 className="text-base md:text-lg lg:text-xl">
+                  {props.post.author.username}
+                </h1>
+              </div>
+            </Link>
             <em className="text-base md:text-lg lg:text-xl text-gray-600">
               {displayDate}
             </em>
