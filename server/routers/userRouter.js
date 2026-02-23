@@ -7,6 +7,6 @@ const userRouter = express.Router();
 userRouter.get("/", (req, res) => {
   res.send("user api working");
 });
-userRouter.get("/:id", verifyToken, getUser);
+userRouter.get("/:userId", verifyToken, getUser);
 
 export default userRouter;

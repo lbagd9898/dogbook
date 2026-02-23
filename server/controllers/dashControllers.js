@@ -39,7 +39,7 @@ export async function getPosts(req, res) {
     comments: comments[post.id],
   }));
 
-  // console.log(detailedPosts);
+  console.log(detailedPosts);
 
   return res.status(200).json({ posts: detailedPosts });
 }
@@ -79,7 +79,7 @@ export async function getComments(postIds) {
   return organizedComments;
 }
 
-async function getLikes(postIds) {
+export async function getLikes(postIds) {
   const likes = await prisma.like.findMany({
     where: {
       postId: {

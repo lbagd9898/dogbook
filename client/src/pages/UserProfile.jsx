@@ -1,11 +1,28 @@
 import Navbar from "../components/Navbar";
 import Rightsidebar from "../components/Rightsidebar";
+import Post from "../components/Post";
 import wolfpack from "../assets/icons/wolfpack.svg";
 import PostIcon from "../assets/icons/postIcon";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-function UserProfile(props) {
+function UserProfile() {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+
+  //shows error alert if user hasn't enterred valid form data
+  const [formError, setFormError] = useState("");
+  const [showError, setShowError] = useState(false);
+
+  function toggleFormError(error) {
+    setFormError(error);
+    setShowError(true);
+
+    setTimeout(() => setShowError(false), 3000);
+    setTimeout(() => setFormError(""), 3700);
+  }
+
   const { userId } = useParams();
   console.log(userId);
 
@@ -13,17 +30,26 @@ function UserProfile(props) {
     const getUserData = async () => {
       console.log("fetch made");
       try {
-        const res = await fetch(`http://localhost:3000/user/${userId}`);
+        const res = await fetch(`http://localhost:3000/user/${userId}`, {
+          method: "GET",
+          credentials: "include",
+        });
         const data = await res.json();
         console.log(data);
+        setUser(data.user);
+        setPosts(data.posts);
+        console.log(data.posts);
       } catch (e) {
         console.log(e);
+      } finally {
+        setLoading(false);
       }
     };
 
     getUserData();
   }, []);
 
+  if (loading === true) return <p>Loading...</p>;
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
@@ -32,15 +58,15 @@ function UserProfile(props) {
           <div className="p-3 flex flex-col gap-4 rounded border border-2 border-[#82C88F] bg-white">
             <div className="flex gap-3">
               <div className="flex flex-1 p-4 text-lg rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
-                <div>0</div>
+                <div>{user.followers}</div>
                 <div>Followers</div>
               </div>
               <div className="flex flex-1 p-4 text-lg rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
-                <div>0</div>
+                <div>{user.following}</div>
                 <div>Following</div>
               </div>
               <div className="flex flex-1 p-4 text-lg rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
-                <div>17</div>
+                <div>{posts.length}</div>
                 <div>Posts</div>
               </div>
             </div>
@@ -48,9 +74,7 @@ function UserProfile(props) {
               <div className="flex flex-1 items-center justify-start gap-3">
                 <img className="w-[5em] h-[5em]" src={wolfpack} alt="" />
                 <div className="flex flex-col">
-                  <p className="text-2xl">Username</p>
-                  <p className=" text-lg text-gray-500">Dogbreed</p>
-                  <p>Joined 2022</p>
+                  <p className="text-2xl">{user.username}</p>
                 </div>
               </div>
               <div className="flex-1 flex justify-end">
@@ -67,6 +91,9 @@ function UserProfile(props) {
             <PostIcon className="w-[1em] h-[1em]"></PostIcon>
             <p>Posts</p>
           </div>
+          {posts.map((post) => (
+            <Post key={post.id} post={post} toggleFormError={toggleFormError} />
+          ))}
         </div>
       </main>
       <Rightsidebar />
