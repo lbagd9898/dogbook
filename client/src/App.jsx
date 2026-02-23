@@ -17,7 +17,9 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
-        <Route path="/user-profile" element={<UserProfile />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/user/:userId" element={<UserProfile />} />
+        </Route>
       </Routes>
     </>
   );
