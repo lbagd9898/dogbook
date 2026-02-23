@@ -3,6 +3,7 @@ import pawprint from "../assets/icons/pawprint.svg";
 import Rightsidebar from "../components/Rightsidebar";
 import Post from "../components/Post";
 import Makepost from "../components/Makepost";
+import Loading from "../components/Loading";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
@@ -106,7 +107,7 @@ export default function Dashboard() {
     loadPosts();
   }, []);
 
-  if (loading === true) return <p>Loading...</p>;
+  if (loading === true) return <Loading></Loading>;
   //change this to error component after designing
   if (error != null) return <p>{error}</p>;
   return (

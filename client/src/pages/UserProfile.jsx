@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import Rightsidebar from "../components/Rightsidebar";
 import Post from "../components/Post";
+import Loading from "../components/Loading";
 import wolfpack from "../assets/icons/wolfpack.svg";
 import PostIcon from "../assets/icons/postIcon";
 import { useParams } from "react-router-dom";
@@ -52,7 +53,7 @@ function UserProfile() {
     getUserData();
   }, []);
 
-  if (loading === true) return <p>Loading...</p>;
+  if (loading === true) return <Loading></Loading>;
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
