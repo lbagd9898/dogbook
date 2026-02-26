@@ -11,14 +11,6 @@ export async function getPosts(req, res) {
     where: {
       followerId: user.id,
     },
-    include: {
-      followed: {
-        select: {
-          id: true,
-          username: true,
-        },
-      },
-    },
   });
 
   //list of ids for everybody the user follows
@@ -55,10 +47,7 @@ export async function getPosts(req, res) {
     comments: comments[post.id],
   }));
 
-  console.log(detailedPosts);
-  console.log(following);
-
-  return res.status(200).json({ posts: detailedPosts, following });
+  return res.status(200).json({ posts: detailedPosts });
 }
 
 //returns an object with comments for each post
@@ -224,5 +213,37 @@ export async function postComment(req, res) {
   } catch (e) {
     console.log(e);
     return res.status(500).json({ message: "failed to post comment" });
+  }
+}
+
+export async function getFollowing(req, res) {
+  console.log("following reached");
+  const userId = req.user.id;
+
+  try {
+    //get all following relations where user is the follower
+    const relations = await prisma.follow.findMany({
+      where: {
+        followerId: userId,
+      },
+      include: {
+        followed: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
+    const following = relations.map((relation) => ({
+      id: relation.followed.id,
+      username: relation.followed.username,
+    }));
+
+    console.log(following);
+    res.status(200).json({ following });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Internal server error" });
   }
 }

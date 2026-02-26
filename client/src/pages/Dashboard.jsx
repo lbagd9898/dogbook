@@ -9,7 +9,6 @@ import { useState, useEffect } from "react";
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
-  const [following, setFollowing] = useState([]);
   const [error, setError] = useState(null);
 
   const [postInput, setPostInput] = useState({ title: "", content: "" });
@@ -95,9 +94,7 @@ export default function Dashboard() {
           throw new Error("Failed to fetch posts.");
         }
         const data = await res.json();
-        console.log("post data", data);
         setPosts(data.posts);
-        setFollowing(data.following);
       } catch (error) {
         console.log(error);
         setError(error.message);
@@ -139,7 +136,7 @@ export default function Dashboard() {
           ))}
         </div>
       </main>
-      <Rightsidebar following={following} />
+      <Rightsidebar />
     </div>
   );
 }
