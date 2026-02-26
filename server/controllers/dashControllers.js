@@ -5,9 +5,19 @@ export async function getPosts(req, res) {
   if (!user) {
     return res.status(404).json({ error: "user not found" });
   }
+
+  //get all following relations where user is the follower
   const following = await prisma.follow.findMany({
     where: {
       followerId: user.id,
+    },
+    include: {
+      followed: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
     },
   });
 
@@ -46,8 +56,9 @@ export async function getPosts(req, res) {
   }));
 
   console.log(detailedPosts);
+  console.log(following);
 
-  return res.status(200).json({ posts: detailedPosts });
+  return res.status(200).json({ posts: detailedPosts, following });
 }
 
 //returns an object with comments for each post
