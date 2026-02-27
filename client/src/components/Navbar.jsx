@@ -3,6 +3,7 @@ import home from "../assets/icons/home.svg";
 import post from "../assets/icons/post.svg";
 import profile from "../assets/icons/profile.svg";
 import logout from "../assets/icons/logout.svg";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
@@ -15,10 +16,12 @@ export default function Navbar() {
           alt=""
         />
       </div>
-      <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
-        <img className="w-[1em] h-[1em]" src={home} alt="" />
-        <p className="hidden md:inline">Home</p>
-      </button>
+      <Link className="w-full" to="/dashboard">
+        <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
+          <img className="w-[1em] h-[1em]" src={home} alt="" />
+          <p className="hidden md:inline">Home</p>
+        </button>
+      </Link>
       <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
         <img className="w-[1em] h-[1em]" src={post} alt="" />
         <p className="hidden md:inline">Post</p>
