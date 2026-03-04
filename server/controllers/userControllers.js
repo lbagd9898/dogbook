@@ -35,6 +35,7 @@ export async function getUser(req, res) {
 
     const posts = await getUserPosts(userId);
     console.log(posts);
+    console.log(user);
     return res.status(200).json({ user, posts });
   } catch (e) {
     return res.status(500).json({ message: e });
@@ -75,4 +76,48 @@ async function getUserPosts(userId) {
     comments: comments[post.id],
   }));
   return detailedPosts;
+}
+
+export async function getMyUser(req, res) {
+  try {
+    console.log("getmyuserreached");
+    const userId = req.user.id;
+    console.log(userId);
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: Number(userId),
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: "user not found." });
+    }
+
+    //how many are they following
+    const following = await prisma.follow.count({
+      where: {
+        followerId: user.id,
+      },
+    });
+
+    const followers = await prisma.follow.count({
+      where: {
+        followedId: user.id,
+      },
+    });
+
+    user["following"] = following;
+
+    user["followers"] = followers;
+
+    const posts = await getUserPosts(userId);
+
+    console.log(user);
+    console.log(posts);
+
+    return res.status(200).json({ user, posts });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ message: "server error" });
+  }
 }

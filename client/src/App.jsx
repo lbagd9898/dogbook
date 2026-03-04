@@ -6,6 +6,7 @@ import GitHubSignIn from "./pages/GitHubSignIn";
 import Dashboard from "./pages/Dashboard";
 import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import MyProfile from "./pages/MyProfile";
 
 function App() {
   return (
@@ -19,6 +20,9 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/user/:userId" element={<UserProfile />} />
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/user/me" element={<MyProfile />} />
         </Route>
       </Routes>
     </>

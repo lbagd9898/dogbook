@@ -1,0 +1,107 @@
+import Navbar from "../components/Navbar";
+import Rightsidebar from "../components/Rightsidebar";
+import wolfpack from "../assets/icons/wolfpack.svg";
+import PostIcon from "../assets/icons/postIcon";
+import Post from "../components/Post";
+import Loading from "../components/Loading";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+
+export default function MyProfile() {
+  console.log("profile mounted");
+
+  //shows error alert if user hasn't enterred valid form data
+  const [formError, setFormError] = useState("");
+  const [showError, setShowError] = useState(false);
+
+  function toggleFormError(error) {
+    //if error already showing ignore
+    if (showError) return;
+    //set show error
+    setFormError(error);
+    setShowError(true);
+
+    setTimeout(() => setShowError(false), 3000);
+    setTimeout(() => setFormError(""), 3700);
+  }
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["myUserData"],
+    queryFn: async () => {
+      console.log("fetching...");
+      const res = await fetch("http://localhost:3000/user/my-profile", {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        console.log("request failed");
+        throw new Error("Failed to fetch Frends");
+      }
+      const data = await res.json();
+      console.log(data);
+      return data;
+    },
+  });
+
+  const user = data?.user;
+  const posts = data?.posts;
+
+  if (isLoading) return <Loading />;
+  if (isError) return <p>Error: {error.message}</p>;
+
+  return (
+    <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
+      <Navbar />
+      <main className="p-6 relative flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+        <div
+          className={`absolute top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
+      text-red-800 px-4 py-2 
+      rounded-md shadow-md 
+      transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}
+        >
+          {formError}
+        </div>
+        <div className="flex flex-col gap-4 font-doggy lg:w-[40vw] xl:w-[50vw]">
+          <div className="p-3 flex flex-col gap-4 rounded border border-2 border-[#82C88F] bg-white">
+            <div className="flex gap-3 text-md md:text-xl">
+              <div className="flex flex-1 p-1 md:p-2 lg:p-4 rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
+                <div>{user.followers}</div>
+                <div>Followers</div>
+              </div>
+              <div className="flex flex-1 p-1 md:p-2 lg:p-4 rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
+                <div>{user.following}</div>
+                <div>Following</div>
+              </div>
+              <div className="flex flex-1 p-1 md:p-2 lg:p-4 rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">
+                <div>{posts.length}</div>
+                <div>Posts</div>
+              </div>
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-3 px-10">
+              <div className="flex flex-1 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
+                <img className="w-[4em] h-[4em]" src={wolfpack} alt="" />
+                <p>{user.username}</p>
+              </div>
+              <div className="flex-1 flex justify-end text-md md:text-lg lg:text-xl">
+                <button
+                  className="bg-white px-4 py-2 shadow-md rounded-lg border-2 border-[#82C88F] pointer hover:bg-gray-200
+                 hover:shadow-lg active:scale-95 transition-all duration-150 ease-out"
+                >
+                  Edit Profile
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 px-3 text-xl text-gray-600">
+            <PostIcon className="w-[1em] h-[1em]"></PostIcon>
+            <p>Posts</p>
+          </div>
+          {posts.map((post) => (
+            <Post key={post.id} post={post} toggleFormError={toggleFormError} />
+          ))}
+        </div>
+      </main>
+      <Rightsidebar />
+    </div>
+  );
+}
