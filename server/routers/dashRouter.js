@@ -6,6 +6,7 @@ import {
   postUpdateLikes,
   postComment,
   getFollowing,
+  getSinglePost,
 } from "../controllers/dashControllers.js";
 
 const dashRouter = express.Router();
@@ -18,5 +19,6 @@ dashRouter.post("/new-post", verifyToken, postPost);
 dashRouter.post("/update-likes", verifyToken, postUpdateLikes);
 dashRouter.post("/post-comment", verifyToken, postComment);
 dashRouter.get("/get-following", verifyToken, getFollowing);
+dashRouter.get("/get-post/:postId", verifyToken, getSinglePost);
 
 export default dashRouter;

@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MyProfile from "./pages/MyProfile";
+import SinglePost from "./pages/SinglePost";
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/user/me" element={<MyProfile />} />
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/post/:postId" element={<SinglePost />} />
         </Route>
       </Routes>
     </>

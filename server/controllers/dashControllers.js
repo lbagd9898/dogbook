@@ -247,3 +247,60 @@ export async function getFollowing(req, res) {
     res.status(500).json({ message: "Internal server error" });
   }
 }
+
+export async function getSinglePost(req, res) {
+  const { postId } = req.params;
+
+  console.log("post id", postId);
+
+  const post = await prisma.post.findUnique({
+    where: {
+      id: Number(postId),
+    },
+    include: {
+      author: {
+        select: {
+          username: true,
+          id: true,
+        },
+      },
+    },
+  });
+
+  const comments = await prisma.comment.findMany({
+    where: {
+      postId: Number(postId),
+    },
+    orderBy: {
+      date: "asc",
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
+    },
+  });
+
+  const likes = await prisma.like.findMany({
+    where: {
+      postId: Number(postId),
+    },
+    orderBy: {
+      date: "desc",
+    },
+  });
+
+  const likeCount = likes.length;
+
+  console.log(post);
+  console.log(comments);
+  console.log(likes);
+  console.log(likeCount);
+
+  const detailedPost = { ...post, likes: likeCount, comments };
+  console.log(detailedPost);
+  return res.status(200).json({ post: detailedPost });
+}
