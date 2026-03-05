@@ -141,18 +141,29 @@ export default function Post(props) {
         <div className="pointer-events-none absolute inset-0 w-[100%] bg-gradient-to-bl from-gray-100/10 via-gray-400/10 to-gray-800/20 top-0 left-0 -translate-x-full group-hover:translate-x-[0%] duration-700"></div>
         {/* Post Content */}
         <div
-          onClick={() => navigate(`/post/${props.post.id}`)}
+          onClick={(e) => {
+            if (e.target.closest("a")) return;
+            navigate(`/post/${props.post.id}`);
+          }}
           className="border border-2 p-4 border-[#82C88F] rounded-md font-doggy flex flex-col gap-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100"
         >
           <div>
-            <Link to={`/user/${props.post.author.id}`}>
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log(props.post.author.id);
+                const path = `/user/${props.post.author.id}`;
+                console.log("navigating to:", path, navigate);
+                setTimeout(() => navigate(path), 1);
+              }}
+            >
               <div className="flex items-center gap-2 cursor-pointer z-10">
                 <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
                 <h1 className="text-base md:text-lg lg:text-xl">
                   {props.post.author.username}
                 </h1>
               </div>
-            </Link>
+            </div>
             <em className="text-base md:text-lg lg:text-xl text-gray-600">
               {displayDate}
             </em>
@@ -165,7 +176,10 @@ export default function Post(props) {
             <div className="flex items-center gap-1 z-10">
               <button
                 className="hover:bg-pink-400 rounded-md p-1"
-                onClick={toggleLike}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleLike();
+                }}
               >
                 <LikeIcon
                   active={liked}
