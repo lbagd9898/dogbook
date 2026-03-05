@@ -81,8 +81,6 @@ export async function getComments(postIds) {
     },
   });
 
-  // console.log(comments);
-
   const organizedComments = comments.reduce((acc, comment) => {
     if (!acc[comment.postId]) {
       acc[comment.postId] = [comment];
