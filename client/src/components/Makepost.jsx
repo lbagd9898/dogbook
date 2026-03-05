@@ -5,7 +5,7 @@ export default function Makepost(props) {
     <div className="lg:w-[40vw] xl:w-[50vw] border border-2 p-4 border-[#82C88F] rounded-md font-doggy flex flex-col gap-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="flex justify-left items-center gap-2">
         <img src={wolfpack} className="h-[1.5em] w-[1.5em]" alt="" />
-        <h1 className="text-base md:text-lg lg:text-xl">Username</h1>
+        <h1 className="text-base md:text-lg lg:text-xl">{props.username}</h1>
       </div>
       <form
         classname="w-full text-sm md:text-base lg:text-lg"

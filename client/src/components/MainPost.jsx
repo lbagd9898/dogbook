@@ -3,17 +3,14 @@ import { LikeIcon } from "../assets/icons/likeIcon";
 import comment from "../assets/icons/comment.svg";
 import { useState, useEffect, useRef } from "react";
 import Comment from "./Comment";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export default function Post(props) {
-  //initialize useNavigate
-  const navigate = useNavigate();
-
+export default function MainPost(props) {
   const [displayDate, setDisplayDate] = useState(props.post.date);
-  const [liked, setLiked] = useState(props.post.likedByUser || false);
+  const [liked, setLiked] = useState(props.post.isLikedByUser);
   const [likeCount, setLikeCount] = useState(props.post.likes || 0);
   // const [visibleCommentCount, setVisibleCommentCount] = useState(2);
-  const [visibleCommentCount, setVisibleCommentCount] = useState(2);
+  const [visibleCommentCount, setVisibleCommentCount] = useState(10);
   const [comments, setComments] = useState(props.post.comments || []);
   const [userComment, setUserComment] = useState("");
 
@@ -137,13 +134,8 @@ export default function Post(props) {
   return (
     <div className="lg:w-[40vw] xl:w-[50vw]">
       <div className="group relative lg:w-[40vw] xl:w-[50vw] pointer overflow-hidden cursor-pointer">
-        {/* Shimmer Overlay */}
-        <div className="pointer-events-none absolute inset-0 w-[100%] bg-gradient-to-bl from-gray-100/10 via-gray-400/10 to-gray-800/20 top-0 left-0 -translate-x-full group-hover:translate-x-[0%] duration-700"></div>
         {/* Post Content */}
-        <div
-          onClick={() => navigate(`/post/${props.post.id}`)}
-          className="border border-2 p-4 border-[#82C88F] rounded-md font-doggy flex flex-col gap-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100"
-        >
+        <div className="border border-2 p-4 border-[#82C88F] rounded-md font-doggy flex flex-col gap-2 shadow-md bg-gradient-to-br from-slate-50 to-slate-100">
           <div>
             <Link to={`/user/${props.post.author.id}`}>
               <div className="flex items-center gap-2 cursor-pointer z-10">

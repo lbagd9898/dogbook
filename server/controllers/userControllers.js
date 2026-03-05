@@ -5,6 +5,7 @@ export async function getUser(req, res) {
   try {
     console.log("get user reached");
     const { userId } = req.params;
+    const currUserId = req.user.id;
 
     console.log(userId);
     const user = await prisma.user.findUnique({
@@ -33,16 +34,17 @@ export async function getUser(req, res) {
 
     user["followers"] = followers;
 
-    const posts = await getUserPosts(userId);
+    const posts = await getUserPosts(userId, currUserId);
     console.log(posts);
     console.log(user);
     return res.status(200).json({ user, posts });
   } catch (e) {
+    console.error(e);
     return res.status(500).json({ message: e });
   }
 }
 
-async function getUserPosts(userId) {
+async function getUserPosts(userId, currUserId) {
   console.log("get user posts reached");
 
   const posts = await prisma.post.findMany({
@@ -68,12 +70,19 @@ async function getUserPosts(userId) {
 
   const comments = await getComments(postIds);
 
-  const likes = await getLikes(postIds);
+  const likes = await getLikes(postIds, currUserId);
+
+  console.log(likes);
+
+  const likeCounts = likes.likeCount;
+
+  const likedByUser = likes.areLikedByUser;
 
   const detailedPosts = posts.map((post) => ({
     ...post,
-    likes: likes[post.id],
+    likes: likeCounts[post.id],
     comments: comments[post.id],
+    likedByUser: likedByUser.includes(post.id),
   }));
   return detailedPosts;
 }
@@ -110,7 +119,7 @@ export async function getMyUser(req, res) {
 
     user["followers"] = followers;
 
-    const posts = await getUserPosts(userId);
+    const posts = await getUserPosts(userId, userId);
 
     console.log(user);
     console.log(posts);

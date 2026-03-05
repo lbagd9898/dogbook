@@ -38,16 +38,26 @@ export async function getPosts(req, res) {
     },
   });
   const postIds = posts.map((post) => post.id);
-  const likes = await getLikes(postIds);
+  const likes = await getLikes(postIds, req.user.id);
   const comments = await getComments(postIds);
+
+  const likeCounts = likes.likeCount;
+
+  const likedByUser = likes.areLikedByUser;
 
   const detailedPosts = posts.map((post) => ({
     ...post,
-    likes: likes[post.id],
+    likes: likeCounts[post.id],
     comments: comments[post.id],
+    likedByUser: likedByUser.includes(post.id),
   }));
+  console.log(likeCounts);
+  console.log(likedByUser);
+  console.log(detailedPosts);
 
-  return res.status(200).json({ posts: detailedPosts });
+  return res
+    .status(200)
+    .json({ posts: detailedPosts, user: req.user.username });
 }
 
 //returns an object with comments for each post
@@ -85,7 +95,7 @@ export async function getComments(postIds) {
   return organizedComments;
 }
 
-export async function getLikes(postIds) {
+export async function getLikes(postIds, userId) {
   const likes = await prisma.like.findMany({
     where: {
       postId: {
@@ -96,11 +106,19 @@ export async function getLikes(postIds) {
       date: "desc",
     },
   });
+
+  const areLikedByUser = likes.reduce((acc, like) => {
+    if (like.userId === userId) acc.push(like.postId);
+    return acc;
+  }, []);
+
+  console.log(areLikedByUser);
+
   const likeCount = likes.reduce((acc, like) => {
     acc[like.postId] != null ? (acc[like.postId] += 1) : (acc[like.postId] = 1);
     return acc;
   }, {});
-  return likeCount;
+  return { likeCount, areLikedByUser };
 }
 
 export async function postPost(req, res) {
@@ -253,6 +271,10 @@ export async function getSinglePost(req, res) {
 
   console.log("post id", postId);
 
+  const userId = req.user.id;
+
+  console.log(userId);
+
   const post = await prisma.post.findUnique({
     where: {
       id: Number(postId),
@@ -293,6 +315,8 @@ export async function getSinglePost(req, res) {
     },
   });
 
+  const isLikedByUser = likes.some((like) => like.userId === req.user.id);
+
   const likeCount = likes.length;
 
   console.log(post);
@@ -300,7 +324,7 @@ export async function getSinglePost(req, res) {
   console.log(likes);
   console.log(likeCount);
 
-  const detailedPost = { ...post, likes: likeCount, comments };
+  const detailedPost = { ...post, likes: likeCount, comments, isLikedByUser };
   console.log(detailedPost);
   return res.status(200).json({ post: detailedPost });
 }

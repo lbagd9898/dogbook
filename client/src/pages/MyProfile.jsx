@@ -3,6 +3,7 @@ import Rightsidebar from "../components/Rightsidebar";
 import wolfpack from "../assets/icons/wolfpack.svg";
 import PostIcon from "../assets/icons/postIcon";
 import Post from "../components/Post";
+import grayPawprint from "../assets/icons/grayPawprint.svg";
 import Loading from "../components/Loading";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -80,7 +81,19 @@ export default function MyProfile() {
             <div className="flex flex-col md:flex-row items-center gap-3 px-10">
               <div className="flex flex-1 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
                 <img className="w-[4em] h-[4em]" src={wolfpack} alt="" />
-                <p>{user.username}</p>
+                <div className="flex flex-col">
+                  <p>{user.username}</p>
+                  {user.breed && (
+                    <div className="flex items-center gap-2 text-base md:text-lg lg:text-xl text-gray-600">
+                      <em>{user.breed}</em>
+                      <img
+                        src={grayPawprint}
+                        className="w-[1em] h-[1em]"
+                        alt=""
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="flex-1 flex justify-end text-md md:text-lg lg:text-xl">
                 <button

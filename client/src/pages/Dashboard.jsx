@@ -11,6 +11,9 @@ export default function Dashboard() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
 
+  //user's username to update in the UI
+  const [username, setUsername] = useState("User");
+
   const [postInput, setPostInput] = useState({ title: "", content: "" });
 
   //shows error alert if user hasn't enterred valid form data
@@ -34,6 +37,7 @@ export default function Dashboard() {
     setPostInput((prev) => ({ ...prev, [name]: value }));
   }
 
+  //SUBMIT NEW POST TO SERVER
   async function onSubmit(e) {
     e.preventDefault();
     //validate form title and content
@@ -75,13 +79,13 @@ export default function Dashboard() {
       }
       const data = await res.json();
       setPosts((prev) => [data.newPost, ...prev]);
-
       setPostInput({ title: "", content: "" });
     } catch (e) {
       console.log(e);
     }
   }
 
+  //FETCHES POSTS FROM SERVER WHEN PAGE IS LOADED
   useEffect(() => {
     const loadPosts = async () => {
       console.log("loading posts");
@@ -95,6 +99,7 @@ export default function Dashboard() {
         }
         const data = await res.json();
         setPosts(data.posts);
+        setUsername(data.user);
       } catch (error) {
         console.log(error);
         setError(error.message);
@@ -127,6 +132,7 @@ export default function Dashboard() {
             <img className="w-[1.5em] h-[1.5em]" src={pawprint} alt="" />
           </div>
           <Makepost
+            username={username}
             postInput={postInput}
             handleChange={handleChange}
             onSubmit={onSubmit}
