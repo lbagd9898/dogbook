@@ -1,7 +1,7 @@
 import express from "express";
 import verifyToken from "../middleware/jwtVerify.js";
 import {
-  getPosts,
+  getDashboard,
   postPost,
   postUpdateLikes,
   postComment,
@@ -14,7 +14,7 @@ const dashRouter = express.Router();
 dashRouter.get("/", (req, res) => {
   res.send("Dashboard API working");
 });
-dashRouter.get("/get-posts", verifyToken, getPosts);
+dashRouter.get("/get-posts", verifyToken, getDashboard);
 dashRouter.post("/new-post", verifyToken, postPost);
 dashRouter.post("/update-likes", verifyToken, postUpdateLikes);
 dashRouter.post("/post-comment", verifyToken, postComment);

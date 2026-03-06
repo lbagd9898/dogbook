@@ -1,49 +1,40 @@
 import { prisma } from "../prismaClient.js";
+import {
+  getFollowingUsers,
+  getPosts,
+  getComments,
+  getLikes,
+  areLikedByUser,
+} from "./dashHelpers.js";
 
-export async function getPosts(req, res) {
+export async function getDashboard(req, res) {
   const user = req.user;
   if (!user) {
     return res.status(404).json({ error: "user not found" });
   }
-
-  //get all following relations where user is the follower
-  const following = await prisma.follow.findMany({
-    where: {
-      followerId: user.id,
-    },
-  });
+  const userId = req.user.id;
+  const following = await getFollowingUsers(userId);
 
   //list of ids for everybody the user follows
   const followingIds = following.map((f) => f.followedId);
 
   //user should see their own posts too
-  followingIds.push(user.id);
+  followingIds.push(userId);
 
-  const posts = await prisma.post.findMany({
-    where: {
-      authorId: {
-        in: followingIds,
-      },
-    },
-    include: {
-      author: {
-        select: {
-          id: true,
-          username: true,
-        },
-      },
-    },
-    orderBy: {
-      date: "desc", // optional but usually expected
-    },
-  });
+  //get posts of all users currUser is following
+  const posts = await getPosts(followingIds);
   const postIds = posts.map((post) => post.id);
-  const likes = await getLikes(postIds, req.user.id);
   const comments = await getComments(postIds);
 
-  const likeCounts = likes.likeCount;
+  const likes = await getLikes(postIds);
 
-  const likedByUser = likes.areLikedByUser;
+  const likeCounts = likes.reduce((acc, like) => {
+    acc[like.postId] = (acc[like.postId] || 0) + 1;
+    return acc;
+  }, {});
+
+  //get ids of posts that are liked by current user
+  const likedByUser = areLikedByUser(likes, userId);
 
   const detailedPosts = posts.map((post) => ({
     ...post,
@@ -51,81 +42,18 @@ export async function getPosts(req, res) {
     comments: comments[post.id],
     likedByUser: likedByUser.includes(post.id),
   }));
-  console.log(likeCounts);
-  console.log(likedByUser);
   console.log(detailedPosts);
-
   return res
     .status(200)
     .json({ posts: detailedPosts, user: req.user.username });
 }
 
-//returns an object with comments for each post
-export async function getComments(postIds) {
-  const comments = await prisma.comment.findMany({
-    where: {
-      postId: {
-        in: postIds,
-      },
-    },
-    orderBy: {
-      date: "asc",
-    },
-    include: {
-      author: {
-        select: {
-          id: true,
-          username: true,
-        },
-      },
-    },
-  });
-
-  const organizedComments = comments.reduce((acc, comment) => {
-    if (!acc[comment.postId]) {
-      acc[comment.postId] = [comment];
-    } else {
-      acc[comment.postId].push(comment);
-    }
-    return acc;
-  }, {});
-
-  return organizedComments;
-}
-
-export async function getLikes(postIds, userId) {
-  const likes = await prisma.like.findMany({
-    where: {
-      postId: {
-        in: postIds,
-      },
-    },
-    orderBy: {
-      date: "desc",
-    },
-  });
-
-  const areLikedByUser = likes.reduce((acc, like) => {
-    if (like.userId === userId) acc.push(like.postId);
-    return acc;
-  }, []);
-
-  console.log(areLikedByUser);
-
-  const likeCount = likes.reduce((acc, like) => {
-    acc[like.postId] != null ? (acc[like.postId] += 1) : (acc[like.postId] = 1);
-    return acc;
-  }, {});
-  return { likeCount, areLikedByUser };
-}
-
 export async function postPost(req, res) {
-  console.log(req.body);
-  //access post content from form
+  //get post content from form
   const title = req.body.title;
   const content = req.body.content;
 
-  //user comes from jwtverify
+  //get user from req object
   const user = req.user;
   console.log(user);
   if (!user) {
@@ -140,6 +68,14 @@ export async function postPost(req, res) {
         content,
         authorId: user.id,
       },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
     });
     console.log(newPost);
     return res.status(201).json({ newPost });
@@ -150,11 +86,8 @@ export async function postPost(req, res) {
 }
 
 export async function postUpdateLikes(req, res) {
-  console.log("updatelikes reached");
   const { postId, liked } = req.body;
   const userId = req.user?.id;
-  console.log(req.body);
-  console.log(req.user);
   try {
     //if user liked post, add it to likes db
     if (liked) {
@@ -186,8 +119,7 @@ export async function postUpdateLikes(req, res) {
 }
 
 export async function postComment(req, res) {
-  console.log("post comment reached");
-  //get user from verifytoken and make sure user exists
+  //get user from req object and make sure user exists
   const user = req.user;
   if (!user) {
     return res.status(404).json({ error: "user not found" });
