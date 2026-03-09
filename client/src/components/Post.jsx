@@ -172,6 +172,15 @@ export default function Post(props) {
           <p className="text-base md:text-lg lg:text-xl">
             {props.post.content}
           </p>
+
+          {/* Post Image */}
+          {props.post.imageUrl && (
+            <img
+              src={props.post.imageUrl}
+              alt="post image"
+              className="rounded-md object-contain max-h-[400px]"
+            />
+          )}
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-1 z-10">
               <button

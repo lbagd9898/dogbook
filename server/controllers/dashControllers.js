@@ -53,6 +53,7 @@ export async function postPost(req, res) {
   //get post content from form
   const title = req.body.title;
   const content = req.body.content;
+  const imageUrl = req.body.imageUrl ?? null;
 
   //get user from req object
   const user = req.user;
@@ -67,6 +68,7 @@ export async function postPost(req, res) {
       data: {
         title,
         content,
+        imageUrl,
         authorId: user.id,
       },
       include: {

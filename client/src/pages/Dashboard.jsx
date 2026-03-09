@@ -77,6 +77,21 @@ export default function Dashboard() {
     console.log("sending post data to server");
     let imageUrl = null;
     if (imageFile) {
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(imageFile.type)) {
+        toggleFormError("Image must be a JPEG, PNG, GIF, or WebP file.");
+        return;
+      }
+      const maxSize = 5 * 1024 * 1024;
+      if (imageFile.size > maxSize) {
+        toggleFormError("Image must be under 5MB.");
+        return;
+      }
       const formData = new FormData();
       formData.append("image", imageFile);
       const uploadRes = await fetch("http://localhost:3000/dash/upload", {
@@ -88,24 +103,24 @@ export default function Dashboard() {
       console.log(uploadData);
       imageUrl = uploadData.url;
     }
-    // try {
-    //   const res = await fetch("http://localhost:3000/dash/new-post", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(postInput),
-    //     credentials: "include",
-    //   });
-    //   if (!res.ok) {
-    //     throw new Error(`HTTP ${res.status}`);
-    //   }
-    //   const data = await res.json();
-    //   setPosts((prev) => [data.newPost, ...prev]);
-    //   setPostInput({ title: "", content: "" });
-    // } catch (e) {
-    //   console.log(e);
-    // }
+    try {
+      const res = await fetch("http://localhost:3000/dash/new-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...postInput, imageUrl }),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setPosts((prev) => [data.newPost, ...prev]);
+      setPostInput({ title: "", content: "" });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   //FETCHES POSTS FROM SERVER WHEN PAGE IS LOADED
