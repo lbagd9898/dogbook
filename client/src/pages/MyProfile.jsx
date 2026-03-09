@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import Rightsidebar from "../components/Rightsidebar";
+import EditProfile from "../components/EditProfile";
 import wolfpack from "../assets/icons/wolfpack.svg";
 import PostIcon from "../assets/icons/postIcon";
 import Post from "../components/Post";
@@ -14,6 +15,7 @@ export default function MyProfile() {
   //shows error alert if user hasn't enterred valid form data
   const [formError, setFormError] = useState("");
   const [showError, setShowError] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   function toggleFormError(error) {
     //if error already showing ignore
@@ -54,6 +56,8 @@ export default function MyProfile() {
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
       <main className="p-6 relative flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+        {showForm && <EditProfile setShowForm={setShowForm}></EditProfile>}
+
         <div
           className={`absolute top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
       text-red-800 px-4 py-2 
@@ -99,6 +103,7 @@ export default function MyProfile() {
                 <button
                   className="bg-white px-4 py-2 shadow-md rounded-lg border-2 border-[#82C88F] pointer hover:bg-gray-200
                  hover:shadow-lg active:scale-95 transition-all duration-150 ease-out"
+                  onClick={() => setShowForm(true)}
                 >
                   Edit Profile
                 </button>

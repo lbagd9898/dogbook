@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   //user's username to update in the UI
   const [username, setUsername] = useState("User");
@@ -37,6 +38,15 @@ export default function Dashboard() {
     setPostInput((prev) => ({ ...prev, [name]: value }));
   }
 
+  //save image file when user attaches one in form
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    console.log(imageFile);
+  }, [imageFile]);
+
   //SUBMIT NEW POST TO SERVER
   async function onSubmit(e) {
     e.preventDefault();
@@ -58,31 +68,44 @@ export default function Dashboard() {
       toggleFormError("Post must include content.");
       return;
     }
-    const maxContentLength = 1500; // adjust if needed
+    const maxContentLength = 1500;
     if (postInput.content.trim().length > maxContentLength) {
       toggleFormError(`Content cannot exceed ${maxContentLength} characters.`);
       return;
     }
-    //send form data to the server if everything looks good
+    //IF EVERYTHING IS GOOD, SEND DATA
     console.log("sending post data to server");
-    try {
-      const res = await fetch("http://localhost:3000/dash/new-post", {
+    let imageUrl = null;
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+      const uploadRes = await fetch("http://localhost:3000/dash/upload", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postInput),
+        body: formData,
         credentials: "include",
       });
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      setPosts((prev) => [data.newPost, ...prev]);
-      setPostInput({ title: "", content: "" });
-    } catch (e) {
-      console.log(e);
+      const uploadData = await uploadRes.json();
+      console.log(uploadData);
+      imageUrl = uploadData.url;
     }
+    // try {
+    //   const res = await fetch("http://localhost:3000/dash/new-post", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(postInput),
+    //     credentials: "include",
+    //   });
+    //   if (!res.ok) {
+    //     throw new Error(`HTTP ${res.status}`);
+    //   }
+    //   const data = await res.json();
+    //   setPosts((prev) => [data.newPost, ...prev]);
+    //   setPostInput({ title: "", content: "" });
+    // } catch (e) {
+    //   console.log(e);
+    // }
   }
 
   //FETCHES POSTS FROM SERVER WHEN PAGE IS LOADED
@@ -136,6 +159,8 @@ export default function Dashboard() {
             postInput={postInput}
             handleChange={handleChange}
             onSubmit={onSubmit}
+            imageFile={imageFile}
+            handleImageChange={handleImageChange}
           ></Makepost>
           {posts.map((post) => (
             <Post key={post.id} post={post} toggleFormError={toggleFormError} />

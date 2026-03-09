@@ -1,4 +1,5 @@
 import { prisma } from "../prismaClient.js";
+import cloudinary from "../cloudinary.js";
 import {
   getFollowingUsers,
   getPosts,
@@ -257,4 +258,17 @@ export async function getSinglePost(req, res) {
   const detailedPost = { ...post, likes: likeCount, comments, isLikedByUser };
   console.log(detailedPost);
   return res.status(200).json({ post: detailedPost });
+}
+
+export async function uploadImage(req, res) {
+  try {
+    const fileBuffer = req.file.buffer.toString("base64");
+    const dataUri = `data:${req.file.mimetype};base64,${fileBuffer}`;
+    const result = await cloudinary.uploader.upload(dataUri);
+    console.log("success", result);
+    res.json({ url: result.secure_url });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: "Image upload failed" });
+  }
 }

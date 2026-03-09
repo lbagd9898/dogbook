@@ -1,4 +1,5 @@
 import wolfpack from "../assets/icons/wolfpack.svg";
+import PhotoIcon from "../assets/icons/PhotoIcon";
 
 export default function Makepost(props) {
   return (
@@ -28,7 +29,20 @@ export default function Makepost(props) {
           onChange={props.handleChange}
           className="w-full border-grey border bg-white rounded p-1 shadow-md mt-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
-        <div className="w-full flex justify-end items-center">
+        <div className="w-full flex justify-between items-end">
+          <input
+            type="file"
+            accept="image/*"
+            id="image-upload"
+            className="hidden"
+            onChange={props.handleImageChange}
+          />
+          <div className="flex items-center gap-2">
+            <label htmlFor="image-upload" className="cursor-pointer">
+              <PhotoIcon className="h-6 w-6 text-gray-400 hover:text-[#6DB77A] transition-colors duration-200" />
+            </label>
+            {props.imageFile && <div>{props.imageFile.name}</div>}
+          </div>
           <button
             className="w-full sm:w-auto
                       bg-[#99D49F] hover:bg-[#6DB77A]
