@@ -82,7 +82,7 @@ export default function MyProfile() {
                 <div>Posts</div>
               </div>
             </div>
-            <div className="flex flex-col md:flex-row items-center gap-3 px-10">
+            <div className="flex flex-col md:flex-row items-center gap-1 px-7 xl:px-10">
               <div className="flex flex-1 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
                 {user.picUrl ? (
                   <img

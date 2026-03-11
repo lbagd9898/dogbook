@@ -50,7 +50,7 @@ export default function Makepost(props) {
             {props.imageFile && <div>{props.imageFile.name}</div>}
           </div>
           <button
-            className="w-full sm:w-auto
+            className="w-auto
                       bg-[#99D49F] hover:bg-[#6DB77A]
                       mt-2
                       px-4 py-2 sm:px-4 sm:py-2
