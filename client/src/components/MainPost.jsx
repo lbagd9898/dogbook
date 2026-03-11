@@ -139,7 +139,18 @@ export default function MainPost(props) {
           <div>
             <Link to={`/user/${props.post.author.id}`}>
               <div className="flex items-center gap-2 cursor-pointer z-10">
-                <img className="w-[1.5em] h-[1.5em]" src={wolfpack} alt="" />
+                {props.post.author.picUrl ? (
+                  <img
+                    className="w-[1.5em] h-[1.5em] rounded-full"
+                    src={props.post.author.picUrl}
+                  ></img>
+                ) : (
+                  <img
+                    className="w-[1.5em] h-[1.5em] rounded"
+                    src={wolfpack}
+                    alt=""
+                  />
+                )}
                 <h1 className="text-base md:text-lg lg:text-xl">
                   {props.post.author.username}
                 </h1>

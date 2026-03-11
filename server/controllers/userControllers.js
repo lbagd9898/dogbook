@@ -113,3 +113,27 @@ export async function getMyUser(req, res) {
     return res.status(500).json({ message: "server error" });
   }
 }
+
+export async function updateUser(req, res) {
+  const breed = req.body.breed ?? null;
+  const imageUrl = req.body.imageUrl ?? null;
+
+  const user = req.user;
+  if (!user) {
+    return res.status(404).json({ error: "user not found" });
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        ...(breed && { breed }),
+        ...(imageUrl && { picUrl: imageUrl }),
+      },
+    });
+    res.json(updatedUser);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Database error" });
+  }
+}

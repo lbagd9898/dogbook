@@ -32,6 +32,7 @@ export async function getPosts(userIds) {
         select: {
           id: true,
           username: true,
+          picUrl: true,
         },
       },
     },

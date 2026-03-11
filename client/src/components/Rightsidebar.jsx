@@ -42,7 +42,18 @@ export default function Rightsidebar() {
       {following.map((relation) => (
         <Link to={`/user/${relation.id}`}>
           <button className="flex items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:text-[#366B40]">
-            <img className="w-[1em] h-[1em]" src={wolfpack} alt="" />
+            {relation.picUrl ? (
+              <img
+                className="w-[1.5em] h-[1.5em] rounded-full"
+                src={relation.picUrl}
+              ></img>
+            ) : (
+              <img
+                className="w-[1.5em] h-[1.5em] rounded"
+                src={wolfpack}
+                alt=""
+              />
+            )}
             <em>{relation.username}</em>
           </button>
         </Link>

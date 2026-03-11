@@ -84,7 +84,18 @@ export default function MyProfile() {
             </div>
             <div className="flex flex-col md:flex-row items-center gap-3 px-10">
               <div className="flex flex-1 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
-                <img className="w-[4em] h-[4em]" src={wolfpack} alt="" />
+                {user.picUrl ? (
+                  <img
+                    className="w-[4em] h-[4em] rounded-full"
+                    src={user.picUrl}
+                  ></img>
+                ) : (
+                  <img
+                    className="w-[4em] h-[4em] rounded"
+                    src={wolfpack}
+                    alt=""
+                  />
+                )}
                 <div className="flex flex-col">
                   <p>{user.username}</p>
                   {user.breed && (

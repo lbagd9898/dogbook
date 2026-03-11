@@ -1,5 +1,6 @@
 import { prisma } from "../prismaClient.js";
 import cloudinary from "../cloudinary.js";
+import { getUser } from "./userHelpers.js";
 import {
   getFollowingUsers,
   getPosts,
@@ -43,10 +44,11 @@ export async function getDashboard(req, res) {
     comments: comments[post.id],
     likedByUser: likedByUser.includes(post.id),
   }));
-  console.log(detailedPosts);
-  return res
-    .status(200)
-    .json({ posts: detailedPosts, user: req.user.username });
+
+  //get current user
+  const userData = await getUser(userId);
+  console.log("current user", userData);
+  return res.status(200).json({ posts: detailedPosts, user: userData });
 }
 
 export async function postPost(req, res) {
@@ -182,6 +184,7 @@ export async function getFollowing(req, res) {
           select: {
             id: true,
             username: true,
+            picUrl: true,
           },
         },
       },
@@ -189,6 +192,7 @@ export async function getFollowing(req, res) {
     const following = relations.map((relation) => ({
       id: relation.followed.id,
       username: relation.followed.username,
+      picUrl: relation.followed.picUrl,
     }));
 
     console.log(following);
@@ -217,6 +221,7 @@ export async function getSinglePost(req, res) {
         select: {
           username: true,
           id: true,
+          picUrl: true,
         },
       },
     },
@@ -268,7 +273,11 @@ export async function uploadImage(req, res) {
     const dataUri = `data:${req.file.mimetype};base64,${fileBuffer}`;
     const result = await cloudinary.uploader.upload(dataUri);
     console.log("success", result);
-    res.json({ url: result.secure_url });
+    let url = result.secure_url;
+    if (req.query.type === "profile") {
+      url = url.replace("/upload/", "/upload/c_fill,g_face,w_200,h_200,r_max/");
+    }
+    res.json({ url });
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Image upload failed" });

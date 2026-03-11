@@ -14,6 +14,7 @@ export default function Dashboard() {
 
   //user's username to update in the UI
   const [username, setUsername] = useState("User");
+  const [user, setUser] = useState(null);
 
   const [postInput, setPostInput] = useState({ title: "", content: "" });
 
@@ -123,7 +124,7 @@ export default function Dashboard() {
     }
   }
 
-  //FETCHES POSTS FROM SERVER WHEN PAGE IS LOADED
+  //FETCHES POSTS/USER FROM SERVER WHEN PAGE IS LOADED
   useEffect(() => {
     const loadPosts = async () => {
       console.log("loading posts");
@@ -136,8 +137,9 @@ export default function Dashboard() {
           throw new Error("Failed to fetch posts.");
         }
         const data = await res.json();
+        console.log(data.user);
         setPosts(data.posts);
-        setUsername(data.user);
+        setUser(data.user);
       } catch (error) {
         console.log(error);
         setError(error.message);
@@ -170,7 +172,7 @@ export default function Dashboard() {
             <img className="w-[1.5em] h-[1.5em]" src={pawprint} alt="" />
           </div>
           <Makepost
-            username={username}
+            user={user}
             postInput={postInput}
             handleChange={handleChange}
             onSubmit={onSubmit}

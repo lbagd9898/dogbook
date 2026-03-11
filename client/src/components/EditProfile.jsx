@@ -1,20 +1,76 @@
 import { useState } from "react";
 import Form from "./Form";
 export default function EditProfile({ setShowForm }) {
-  const [inputVals, setInputVals] = useState({ breed: "" });
+  const [inputVals, setInputVals] = useState({});
   const [touched, setTouched] = useState(false);
 
   const header = "Edit Profile";
-  const fields = [{ name: "breed", type: "text", label: "Your breed:" }];
+  const fields = [
+    { name: "breed", type: "text", label: "Your breed:" },
+    { name: "profilePic", type: "file", label: "Profile Picture: " },
+  ];
   const buttonText = "Submit";
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+    console.log("form submitted");
+    let imageUrl = null;
+    // UPLOAD IMAGE TO CLOUDINARY
+    if (inputVals.profilePic) {
+      const imageFile = inputVals.profilePic;
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(imageFile.type)) {
+        // toggleFormError("Image must be a JPEG, PNG, GIF, or WebP file.");
+        return;
+      }
+      console.log("approved", imageFile);
+      const formData = new FormData();
+      formData.append("image", imageFile);
+      console.log([...formData.entries()]);
+      const uploadRes = await fetch("http://localhost:3000/dash/upload", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      const uploadData = await uploadRes.json();
+      console.log(uploadData);
+      imageUrl = uploadData.url;
+      console.log(imageUrl);
+    }
+    //UPDATE USER DATA
+    try {
+      const res = await fetch(
+        "http://localhost:3000/user/update-user?type=profile",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ breed: inputVals.breed, imageUrl }),
+          credentials: "include",
+        }
+      );
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const onChange = (e) => {
-    const { name, value } = e.target;
-    setInputVals((prev) => ({ ...prev, [name]: value }));
+    const { name, type, value, files } = e.target;
+    setInputVals((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : value,
+    }));
+    console.log(inputVals);
     if (!touched) {
       setTouched(true);
     }
