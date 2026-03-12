@@ -83,37 +83,37 @@ function UserProfile() {
               </div>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-3 px-10">
-              <div className="flex flex-1 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
+              <div className="flex flex-1 min-w-0 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
                 {user.picUrl ? (
                   <img
-                    className="w-[4em] h-[4em] rounded-full object-cover"
+                    className="w-[4em] h-[4em] rounded-full object-cover flex-shrink-0"
                     src={user.picUrl}
-                  ></img>
+                  />
                 ) : (
                   <img
-                    className="w-[4em] h-[4em] rounded"
+                    className="w-[4em] h-[4em] rounded flex-shrink-0"
                     src={wolfpack}
                     alt=""
                   />
                 )}
-                <div className="flex flex-col">
-                  <p>{user.username}</p>
+                <div className="flex flex-col min-w-0">
+                  <p className="truncate">{user.username}</p>
                   {user.breed && (
-                    <div className="flex items-center gap-2 text-base md:text-lg lg:text-xl text-gray-600">
-                      <em>{user.breed}</em>
+                    <div className="flex items-center gap-2 text-base md:text-lg lg:text-xl text-gray-600 min-w-0">
+                      <em className="block truncate min-w-0">{user.breed}</em>
                       <img
                         src={grayPawprint}
-                        className="w-[1em] h-[1em]"
+                        className="w-[1em] h-[1em] flex-shrink-0"
                         alt=""
                       />
                     </div>
                   )}
                 </div>
               </div>
-              <div className="flex-1 flex justify-end text-md md:text-lg lg:text-xl">
+              <div className="flex flex-shrink-0 justify-end text-md md:text-lg lg:text-xl">
                 <button
                   className="bg-[#82C88F] px-4 py-2 shadow-md rounded-lg border-2 border-black hover:bg-[#6fb97c]
-                   hover:shadow-lg active:scale-95 transition-all duration-150 ease-out"
+       hover:shadow-lg active:scale-95 transition-all duration-150 ease-out"
                 >
                   Follow
                 </button>

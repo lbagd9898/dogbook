@@ -82,8 +82,8 @@ export default function MyProfile() {
                 <div>Posts</div>
               </div>
             </div>
-            <div className="flex flex-col md:flex-row items-center gap-1 px-7 xl:px-10">
-              <div className="flex flex-1 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
+            <div className="flex flex-col md:flex-row items-center gap-3 px-7 xl:px-10">
+              <div className="flex flex-1 min-w-0 items-center justify-start gap-3 text-lg md:text-xl lg:text-2xl">
                 {user.picUrl ? (
                   <img
                     className="w-[4em] h-[4em] rounded-full"
@@ -96,11 +96,11 @@ export default function MyProfile() {
                     alt=""
                   />
                 )}
-                <div className="flex flex-col">
-                  <p>{user.username}</p>
+                <div className="flex flex-col min-w-0">
+                  <p className="truncate">{user.username}</p>
                   {user.breed && (
                     <div className="flex items-center gap-2 text-base md:text-lg lg:text-xl text-gray-600">
-                      <em>{user.breed}</em>
+                      <em className="block truncate">{user.breed}</em>
                       <img
                         src={grayPawprint}
                         className="w-[1em] h-[1em]"
@@ -110,7 +110,7 @@ export default function MyProfile() {
                   )}
                 </div>
               </div>
-              <div className="flex-1 flex justify-end text-md md:text-lg lg:text-xl">
+              <div className="flex flex-shrink-0 justify-end text-md md:text-lg lg:text-xl">
                 <button
                   className="bg-white px-4 py-2 shadow-md rounded-lg border-2 border-[#82C88F] pointer hover:bg-gray-200
                  hover:shadow-lg active:scale-95 transition-all duration-150 ease-out"
