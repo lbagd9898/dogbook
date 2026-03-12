@@ -1,5 +1,5 @@
 import { prisma } from "../prismaClient.js";
-import { getUser } from "./userHelpers.js";
+import { getUser, isCurrUserFollowing } from "./userHelpers.js";
 import {
   getPosts,
   getComments,
@@ -32,12 +32,16 @@ export async function getUserData(req, res) {
     const followers = await getFollowers(userId);
     const followersCount = followers.length;
 
+    //returns if current user is following
+    const isFollowing = await isCurrUserFollowing(userId, currUserId);
+
+    console.log(isFollowing);
     user["following"] = followingCount;
     user["followers"] = followersCount;
+    user["isFollowing"] = isFollowing;
 
     //get users posts
     const posts = await getUserPosts(userId, currUserId);
-    console.log(posts);
     console.log(user);
     return res.status(200).json({ user, posts });
   } catch (e) {
@@ -47,17 +51,12 @@ export async function getUserData(req, res) {
 }
 
 async function getUserPosts(userId, currUserId) {
-  console.log("get user posts reached");
-
   const posts = await getPosts([userId]);
   const postIds = posts.map((post) => post.id);
-  console.log(postIds);
 
   const comments = await getComments(postIds);
 
   const likes = await getLikes(postIds);
-
-  console.log(likes);
 
   const likeCounts = likes.reduce((acc, like) => {
     acc[like.postId] = (acc[like.postId] || 0) + 1;
@@ -136,4 +135,58 @@ export async function updateUser(req, res) {
     console.log(e);
     res.status(500).json({ message: "Database error" });
   }
+}
+
+export async function toggleFollow(req, res) {
+  const { userId: followedId, followedByUser } = req.body;
+  const followerId = req.user.id;
+  console.log(followedByUser);
+  console.log(await isCurrUserFollowing(followedId, followerId));
+
+  try {
+    if (followedByUser) {
+      await prisma.follow.delete({
+        where: {
+          followerId_followedId: {
+            followerId,
+            followedId,
+          },
+        },
+      });
+    } else {
+      await prisma.follow.create({
+        data: {
+          followerId,
+          followedId,
+        },
+      });
+    }
+    console.log("following toggled");
+    res.json({ following: !followedByUser });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "db error" });
+  }
+}
+
+export async function searchUsers(req, res) {
+  console.log("search user reached");
+  const { username } = req.query;
+
+  const users = await prisma.user.findMany({
+    where: {
+      username: {
+        contains: username,
+        mode: "insensitive",
+      },
+      NOT: { id: req.user.id },
+    },
+    select: {
+      id: true,
+      username: true,
+      picUrl: true,
+    },
+  });
+
+  res.json({ users });
 }

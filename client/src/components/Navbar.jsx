@@ -1,8 +1,8 @@
 import pawprint from "../assets/icons/pawprint.svg";
 import home from "../assets/icons/home.svg";
-import post from "../assets/icons/post.svg";
 import profile from "../assets/icons/profile.svg";
 import logout from "../assets/icons/logout.svg";
+import search from "../assets/icons/search.svg";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
@@ -22,10 +22,12 @@ export default function Navbar() {
           <p className="hidden md:inline">Home</p>
         </button>
       </Link>
-      <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
-        <img className="w-[1em] h-[1em]" src={post} alt="" />
-        <p className="hidden md:inline">Post</p>
-      </button>
+      <Link className="w-full" to="/search">
+        <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
+          <img className="w-[1em] h-[1em]" src={search} alt="" />
+          <p className="hidden md:inline">Search</p>
+        </button>
+      </Link>
       <Link className="w-full" to="/user/me">
         <button className="flex w-full items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:bg-[#6DB77A]">
           <img className="w-[1em] h-[1em]" src={profile} alt="" />

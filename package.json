@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "predev": "kill-port 5173 3000 || true",
     "server": "npm --prefix server run dev",
     "client": "npm --prefix client run dev"
   },

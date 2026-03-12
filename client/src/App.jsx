@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MyProfile from "./pages/MyProfile";
+import Search from "./pages/Search";
 import SinglePost from "./pages/SinglePost";
 
 function App() {
@@ -27,6 +28,9 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/post/:postId" element={<SinglePost />} />
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/search" element={<Search />} />
         </Route>
       </Routes>
     </>

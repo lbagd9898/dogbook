@@ -7,11 +7,13 @@ import PostIcon from "../assets/icons/postIcon";
 import grayPawprint from "../assets/icons/grayPawprint.svg";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [followedByUser, setFollowedByUser] = useState(false);
 
   //shows error alert if user hasn't enterred valid form data
   const [formError, setFormError] = useState("");
@@ -28,6 +30,26 @@ function UserProfile() {
     setTimeout(() => setFormError(""), 3700);
   }
 
+  const queryClient = useQueryClient();
+
+  const { mutate: toggleFollow } = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("http://localhost:3000/user/toggle-follow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ userId: user.id, followedByUser }),
+      });
+      if (!res.ok) throw new Error("db error");
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setFollowedByUser(data.following);
+      queryClient.invalidateQueries({ queryKey: ["following"] });
+    },
+    onError: (e) => console.error(e),
+  });
+
   const { userId } = useParams();
   console.log(userId);
 
@@ -43,6 +65,7 @@ function UserProfile() {
         console.log(data);
         setUser(data.user);
         setPosts(data.posts);
+        setFollowedByUser(data.user.isFollowing);
       } catch (e) {
         console.log(e);
       } finally {
@@ -112,10 +135,14 @@ function UserProfile() {
               </div>
               <div className="flex flex-shrink-0 justify-end text-md md:text-lg lg:text-xl">
                 <button
-                  className="bg-[#82C88F] px-4 py-2 shadow-md rounded-lg border-2 border-black hover:bg-[#6fb97c]
-       hover:shadow-lg active:scale-95 transition-all duration-150 ease-out"
+                  onClick={toggleFollow}
+                  className={`px-4 py-2 shadow-md rounded-lg border-2 transition-all duration-150 ease-out hover:shadow-lg active:scale-95 ${
+                    followedByUser
+                      ? "bg-gray-200 border-[#82C88F] hover:bg-gray-300"
+                      : "bg-[#82C88F] border-black hover:bg-[#6fb97c]"
+                  }`}
                 >
-                  Follow
+                  {followedByUser ? "Unfollow" : "Follow"}
                 </button>
               </div>
             </div>
