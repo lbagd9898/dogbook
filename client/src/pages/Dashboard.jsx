@@ -13,7 +13,6 @@ export default function Dashboard() {
   const [imageFile, setImageFile] = useState(null);
 
   //user's username to update in the UI
-  const [username, setUsername] = useState("User");
   const [user, setUser] = useState(null);
 
   const [postInput, setPostInput] = useState({ title: "", content: "" });
@@ -157,9 +156,9 @@ export default function Dashboard() {
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
-      <main className="relative p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+      <main className="p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
         <div
-          className={`absolute top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
+          className={`fixed z-10 top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
         text-red-800 px-4 py-2 
         rounded-md shadow-md 
         transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}

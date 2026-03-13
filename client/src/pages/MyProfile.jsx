@@ -59,10 +59,10 @@ export default function MyProfile() {
         {showForm && <EditProfile setShowForm={setShowForm}></EditProfile>}
 
         <div
-          className={`absolute top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
-      text-red-800 px-4 py-2 
-      rounded-md shadow-md 
-      transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}
+          className={`fixed z-10 top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
+        text-red-800 px-4 py-2 
+        rounded-md shadow-md 
+        transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}
         >
           {formError}
         </div>

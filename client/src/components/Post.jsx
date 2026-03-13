@@ -245,7 +245,7 @@ export default function Post(props) {
           />
           <button
             type="submit"
-            className="bg-[#99D49F] hover:bg-[#6DB77A] py-1 px-2 rounded"
+            className="bg-[#99D49F] active:scale-95 hover:bg-[#6DB77A] py-1 px-2 rounded"
           >
             Send
           </button>
