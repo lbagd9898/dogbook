@@ -2,7 +2,7 @@ import { prisma } from "../prismaClient.js";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import passport from "passport";
-import jwt from "jsonwebtoken";
+import { issueTokens } from "../middleware/issueTokens.js";
 
 export const validateSignUp = [
   body("username")
@@ -82,18 +82,12 @@ export async function postSignUp(req, res) {
 }
 
 export function postLogIn(req, res, next) {
-  passport.authenticate("local", (err, user, info) => {
+  passport.authenticate("local", async (err, user, info) => {
     if (err) return next(err);
     if (!user) return res.status(401).json({ message: info.message });
 
     //user exists and login is successful
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET
-    );
-    res.cookie("token", token, {
-      httpOnly: true,
-    });
+    await issueTokens(res, user);
     return res.status(200).json({ message: "Login successful" });
   })(req, res, next);
 }
@@ -103,19 +97,11 @@ export const getGithub = [
 ];
 
 export function getGithubCallback(req, res, next) {
-  passport.authenticate("github", (err, user, info) => {
+  passport.authenticate("github", async (err, user, info) => {
     if (err) return next(err);
     if (user) {
       console.log("token issued");
-      const token = jwt.sign(
-        { id: user.id, username: user.username },
-        process.env.JWT_SECRET
-      );
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      });
+      await issueTokens(res, user);
       return res.redirect(`${process.env.CLIENT_URL}dashboard`);
     }
     console.log(info.githubProfile.id);
@@ -150,15 +136,7 @@ export function postLinkGithub(req, res, next) {
         data: { githubId },
       });
       //user exists and login is successful
-      const token = jwt.sign(
-        { id: user.id, username: user.username },
-        process.env.JWT_SECRET
-      );
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      });
+      await issueTokens(res, user);
       return res
         .status(200)
         .json({ message: "github account linked!", user: user });
@@ -175,4 +153,17 @@ export function getVerify(req, res) {
   }
   console.log("user verified");
   return res.sendStatus(200);
+}
+
+export async function postLogOut(req, res) {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (refreshToken) {
+    await prisma.session.delete({
+      where: { refreshToken },
+    });
+  }
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  return res.status(200).json({ message: "Logged out successfully" });
 }

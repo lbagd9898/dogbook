@@ -7,6 +7,7 @@ import {
   getGithubCallback,
   postLinkGithub,
   getVerify,
+  postLogOut,
 } from "../controllers/authControllers.js";
 import verifyToken from "../middleware/jwtVerify.js";
 const authRouter = express.Router();
@@ -20,5 +21,6 @@ authRouter.get("/github", getGithub);
 authRouter.get("/github/callback", getGithubCallback);
 authRouter.post("/link-github", postLinkGithub);
 authRouter.get("/verify", verifyToken, getVerify);
+authRouter.post("/log-out", postLogOut);
 
 export default authRouter;

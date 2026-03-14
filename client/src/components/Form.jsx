@@ -24,7 +24,7 @@ export default function Form({
         className="flex flex-col justify-center gap-4 md:gap-6 items-center"
       >
         <h1 className="text-2xl md:text-4xl lg:text-5xl">{header}</h1>
-        {fields.map((field) => (
+        {fields?.map((field) => (
           <div className="flex gap-2 justify-between items-center p-2 w-full text-base md:text-lg lg:text-xl">
             <label htmlFor={field.name}>{field.label}</label>
             {field.type === "file" ? (

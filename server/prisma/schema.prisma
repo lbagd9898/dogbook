@@ -15,6 +15,7 @@ model User {
   picUrl   String?
   breed    String?
   githubId String?   @unique
+  sessions Session[]
   posts    Post[]
   comments Comment[]
   likes    Like[]
@@ -64,4 +65,13 @@ model Follow {
 
   @@id ([followerId, followedId])
   @@index([followedId])
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  refreshToken String   @unique
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
 }
