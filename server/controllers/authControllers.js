@@ -152,7 +152,7 @@ export function getVerify(req, res) {
     return res.sendStatus(401);
   }
   console.log("user verified");
-  return res.sendStatus(200);
+  return res.status(200).json({ user });
 }
 
 export async function postLogOut(req, res) {

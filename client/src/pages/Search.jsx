@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "../components/Navbar";
 import Rightsidebar from "../components/Rightsidebar";
@@ -8,11 +8,17 @@ import wolfpack from "../assets/icons/wolfpack.svg";
 
 export default function Search() {
   const navigate = useNavigate();
-  const [query, setQuery] = useState("");
-  const [submittedQuery, setSubmittedQuery] = useState("");
+
+  //set up search params
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const submittedQuery = searchParams.get("q") || "";
+
+  //query now updates to submittedQuery value saved in params
+  const [query, setQuery] = useState(submittedQuery);
 
   function handleSearch() {
-    setSubmittedQuery(query);
+    setSearchParams({ q: query });
   }
 
   const { data, isLoading, isError } = useQuery({

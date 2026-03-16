@@ -1,7 +1,10 @@
 import Form from "./Form";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Logout({ setShowLogout }) {
+  //initialize queryClient
+  const queryClient = useQueryClient();
   const header = "Are you sure?";
   const buttonText = "Yes";
 
@@ -16,6 +19,8 @@ export default function Logout({ setShowLogout }) {
       });
       if (res.ok) {
         console.log("logout successful");
+        queryClient.setQueryData(["user"], null);
+        queryClient.clear();
         navigate("/");
       }
     } catch (err) {

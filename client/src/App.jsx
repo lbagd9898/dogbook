@@ -5,35 +5,34 @@ import SignUp from "./pages/SignUp";
 import GitHubSignIn from "./pages/GitHubSignIn";
 import Dashboard from "./pages/Dashboard";
 import UserProfile from "./pages/UserProfile";
-import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
+import PrivateRoute from "./components/PrivateRoute";
+import { AuthProvider } from "./AuthProvider";
 import MyProfile from "./pages/MyProfile";
 import Search from "./pages/Search";
 import SinglePost from "./pages/SinglePost";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Routes>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/github" element={<GitHubSignIn />} />
-        <Route element={<ProtectedRoute />}>
+        {/* Public routes — redirects to / if already logged in */}
+        <Route element={<PublicRoute />}>
+          <Route path="/" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/github" element={<GitHubSignIn />} />
+        </Route>
+
+        {/* Private routes — redirects to / if not logged in */}
+        <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
-        </Route>
-        <Route element={<ProtectedRoute />}>
           <Route path="/user/:userId" element={<UserProfile />} />
-        </Route>
-        <Route element={<ProtectedRoute />}>
           <Route path="/user/me" element={<MyProfile />} />
-        </Route>
-        <Route element={<ProtectedRoute />}>
           <Route path="/post/:postId" element={<SinglePost />} />
-        </Route>
-        <Route element={<ProtectedRoute />}>
           <Route path="/search" element={<Search />} />
         </Route>
       </Routes>
-    </>
+    </AuthProvider>
   );
 }
 
