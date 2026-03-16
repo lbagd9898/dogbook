@@ -47,6 +47,7 @@ export default function Search() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder="Search for a user..."
               className="flex-1 px-4 py-2 rounded-lg border-2 border-gray-300 shadow-md bg-white focus:outline-none focus:border-[#82C88F] transition-all duration-150"
             />

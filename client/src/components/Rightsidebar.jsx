@@ -23,6 +23,9 @@ export default function Rightsidebar() {
     staleTime: 1000 * 60 * 5,
   });
 
+  const MAX_VISIBLE = 8;
+  const visibleFollowing = following?.slice(0, MAX_VISIBLE);
+
   return (
     <div className="hidden lg:flex flex-col p-4 border-2 border-[#636363] border-dotted gap-1 font-doggy bg-gradient-to-bl from-[#ACE1AF] via-[#99D49F] to-[#82C88F]">
       <div className="flex items-center gap-2 mb-2">
@@ -48,7 +51,7 @@ export default function Rightsidebar() {
         </div>
       )}
 
-      {following?.map((relation) => (
+      {visibleFollowing?.map((relation) => (
         <Link key={relation.id} to={`/user/${relation.id}`}>
           <button className="flex items-center gap-2 text-left text-md md:text-lg lg:text-xl px-4 py-2 rounded hover:text-[#366B40]">
             <img
