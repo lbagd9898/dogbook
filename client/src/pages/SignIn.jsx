@@ -6,8 +6,12 @@ import githubIcon from "../assets/icons/github.svg";
 import Errors from "../components/Errors";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SignIn() {
+  //initialize queryClient
+  const queryClient = useQueryClient();
+
   //determines if user has started typing yet
   const [touched, setTouched] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
@@ -16,8 +20,16 @@ export default function SignIn() {
   //input values
   const [inputVals, setInputVals] = useState({ email: "", password: "" });
 
-  //list of errors in clientside form validation
+  //list of errors in clientside form validation and server errors
   const [errors, setErrors] = useState([]);
+
+  //error handling for oAuth
+  const errorMessages = {
+    github_failed: "GitHub sign-in failed. Please try again.",
+    session_expired:
+      "Your session expired. Please try signing in with GitHub again.",
+    server_error: "Server failed to log you in. Please try again.",
+  };
 
   //button link navigation
   const navigate = useNavigate();
@@ -31,6 +43,29 @@ export default function SignIn() {
   ];
   const buttonText = "Log In";
   const header = "Sign In Below";
+
+  //re-populates error messages after the user types
+  function validate(values) {
+    const errors = [];
+    if (!values.email) {
+      errors.push("Email required.");
+    } else if (!values.email.includes("@")) {
+      errors.push("Valid email required.");
+    }
+    if (!values.password) {
+      errors.push("Password required.");
+    }
+    return errors;
+  }
+
+  //error handling for oAuth redirects
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get("error");
+    if (error && errorMessages[error]) {
+      setErrors([errorMessages[error]]);
+    }
+  }, []);
 
   //re-populates errors array as user types
   useEffect(() => {
@@ -82,31 +117,21 @@ export default function SignIn() {
           body: JSON.stringify(inputVals),
           credentials: "include",
         });
-        //error appears  in the console
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
         const data = await res.json();
-        console.log(data);
+        //error renders in the console
+        if (!res.ok) {
+          console.log(data);
+          setErrors([data.message]);
+          return;
+        }
+        queryClient.setQueryData(["user"], data.user);
+
+        navigate("/dashboard");
       } catch (e) {
         console.log(e);
       }
     }
   };
-
-  //re-populates error messages after the user types
-  function validate(values) {
-    const errors = [];
-    if (!values.email) {
-      errors.push("Email required.");
-    } else if (!values.email.includes("@")) {
-      errors.push("Valid email required.");
-    }
-    if (!values.password) {
-      errors.push("Password required.");
-    }
-    return errors;
-  }
 
   return (
     <div className="h-screen flex flex-col">

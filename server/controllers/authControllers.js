@@ -39,7 +39,7 @@ export async function postSignUp(req, res) {
   //check for errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(200).json({ errors: errors.array() });
+    return res.status(400).json({ errors: errors.array() });
   }
 
   // extract data from req body
@@ -87,8 +87,12 @@ export function postLogIn(req, res, next) {
     if (!user) return res.status(401).json({ message: info.message });
 
     //user exists and login is successful
-    await issueTokens(res, user);
-    return res.status(200).json({ message: "Login successful" });
+    try {
+      await issueTokens(res, user);
+    } catch (err) {
+      return next(err);
+    }
+    return res.status(200).json({ message: "Login successful", user });
   })(req, res, next);
 }
 
@@ -98,13 +102,16 @@ export const getGithub = [
 
 export function getGithubCallback(req, res, next) {
   passport.authenticate("github", async (err, user, info) => {
-    if (err) return next(err);
+    if (err)
+      return res.redirect(`${process.env.CLIENT_URL}login?error=github_failed`);
     if (user) {
       console.log("token issued");
       await issueTokens(res, user);
       return res.redirect(`${process.env.CLIENT_URL}dashboard`);
     }
-    console.log(info.githubProfile.id);
+    if (!info?.githubProfile?.id) {
+      return res.redirect(`${process.env.CLIENT_URL}login?error=github_failed`);
+    }
 
     req.session.oauthLink = {
       provider: "github",
@@ -118,12 +125,15 @@ export function getGithubCallback(req, res, next) {
 
 export function postLinkGithub(req, res, next) {
   passport.authenticate("local", async (err, user, info) => {
-    if (err) return next(err);
+    if (err)
+      return res.redirect(`${process.env.CLIENT_URL}login?error=server_error`);
     if (!user) return res.status(401).json({ message: info.message });
     console.log(user);
     console.log(req.session.oauthLink);
     if (!req.session.oauthLink?.githubId) {
-      return res.status(400).json({ message: "No GitHub account to link" });
+      return res.redirect(
+        `${process.env.CLIENT_URL}login?error=session_expired`
+      );
     }
 
     try {

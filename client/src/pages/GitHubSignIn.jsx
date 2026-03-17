@@ -3,8 +3,15 @@ import Form from "../components/Form";
 import Footer from "../components/Footer";
 import Errors from "../components/Errors";
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tankstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 export default function GitHubSignIn() {
+  //initialize navigate
+  const navigate = useNavigate();
+  //initialize queryClient
+  const queryClient = useQueryClient();
+
   const [touched, setTouched] = useState(false);
 
   //input values
@@ -56,7 +63,9 @@ export default function GitHubSignIn() {
       });
       const data = await res.json();
       if (res.ok) {
-        console.log("success", data);
+        queryClient.setQueryData(["user"], data.user);
+
+        navigate("/dashboard");
       } else {
         console.log("not success", data);
         if (data.message) {

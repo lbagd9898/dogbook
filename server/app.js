@@ -38,4 +38,12 @@ app.use("/auth", authRouter);
 app.use("/dash", dashRouter);
 app.use("/user", userRouter);
 
+//error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack); // log it server-side
+  res
+    .status(err.status || 500)
+    .json({ error: err.message || "Something went wrong" });
+});
+
 export default app;

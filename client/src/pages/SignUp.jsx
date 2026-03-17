@@ -103,10 +103,11 @@ export default function SignUp() {
           }
           if (data.errors) {
             const messages = data.errors.map((err) => err.msg);
-            setErrors([messages]);
+            setErrors(messages);
           }
         }
       } catch (e) {
+        setErrors(["Network error. Please try again."]);
         console.log(e);
       }
     } else {
