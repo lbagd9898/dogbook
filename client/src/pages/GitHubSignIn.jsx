@@ -3,7 +3,7 @@ import Form from "../components/Form";
 import Footer from "../components/Footer";
 import Errors from "../components/Errors";
 import { useState, useEffect } from "react";
-import { useQueryClient } from "@tankstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 export default function GitHubSignIn() {
