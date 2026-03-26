@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Form from "./Form";
-export default function EditProfile({ setShowForm }) {
+export default function EditProfile({ setShowForm, toggleFormError }) {
   const [inputVals, setInputVals] = useState({});
   const [touched, setTouched] = useState(false);
 
@@ -29,18 +29,29 @@ export default function EditProfile({ setShowForm }) {
         return;
       }
       console.log("approved", imageFile);
-      const formData = new FormData();
-      formData.append("image", imageFile);
-      console.log([...formData.entries()]);
-      const uploadRes = await fetch("http://localhost:3000/dash/upload", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-      const uploadData = await uploadRes.json();
-      console.log(uploadData);
-      imageUrl = uploadData.url;
-      console.log(imageUrl);
+      try {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        console.log([...formData.entries()]);
+        const uploadRes = await fetch("http://localhost:3000/dash/upload", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        });
+        if (!uploadRes.ok) {
+          setShowForm(false);
+          toggleFormError("Server error. Failed to update profile picture.");
+          return;
+        }
+        const uploadData = await uploadRes.json();
+        console.log(uploadData);
+        imageUrl = uploadData.url;
+        console.log(imageUrl);
+      } catch (e) {
+        console.log(e);
+        setShowForm(false);
+        toggleFormError("Server error. Failed to update profile picture.");
+      }
     }
     //UPDATE USER DATA
     try {
@@ -56,11 +67,15 @@ export default function EditProfile({ setShowForm }) {
         }
       );
       if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        setShowForm(false);
+        toggleFormError("Server error. Failed to update user.");
+        return;
       }
       window.location.reload();
     } catch (e) {
       console.log(e);
+      setShowForm(false);
+      toggleFormError("Server error. Failed to update user.");
     }
   };
 
