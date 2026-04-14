@@ -15,7 +15,7 @@ export default function Makepost(props) {
         </h1>
       </div>
       <form
-        classname="w-full text-sm md:text-base lg:text-lg"
+        className="w-full text-sm md:text-base lg:text-lg"
         action="post"
         onSubmit={props.onSubmit}
       >

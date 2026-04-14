@@ -57,7 +57,7 @@ export default function SignUp() {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
     if (!values.username) {
       errors.push("Username required.");
-    } else if (values.username.length < 4 || values.username.length > 15) {
+    } else if (values.username.length < 5 || values.username.length > 15) {
       errors.push("Username must be between 5 and 15 characters.");
     }
     if (!values.password) {
@@ -115,8 +115,8 @@ export default function SignUp() {
   return (
     <div className="flex flex-col h-screen">
       <Header />
-      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy pt-[5%] gap-2 items-center m-0">
-        <div>
+      <div className="flex-grow p-2 bg-gradient-to-br from-gray-100 via-gray-300 to-gray-600 flex flex-col font-doggy gap-2 justify-center items-center overflow-x-hidden">
+        <div className="w-full px-4 max-w-md">
           <div className="border-2 border-[#ACE1AF] rounded flex flex-col items-center p-4 md:p-6 lg:p-8 shadow-lg bg-white gap-2">
             <Form
               fields={fields}

@@ -133,8 +133,8 @@ export default function Post(props) {
   }, []);
 
   return (
-    <div className="lg:w-[40vw] xl:w-[50vw]">
-      <div className="group relative lg:w-[40vw] xl:w-[50vw] pointer overflow-hidden cursor-pointer">
+    <div className="w-full lg:w-[40vw] xl:w-[50vw]">
+      <div className="group relative w-full lg:w-[40vw] xl:w-[50vw] pointer overflow-hidden cursor-pointer">
         {/* Shimmer Overlay */}
         <div className="pointer-events-none absolute inset-0 w-[100%] bg-gradient-to-bl from-gray-100/10 via-gray-400/10 to-gray-800/20 top-0 left-0 -translate-x-full group-hover:translate-x-[0%] duration-700"></div>
         {/* Post Content */}
@@ -187,7 +187,7 @@ export default function Post(props) {
             <img
               src={props.post.imageUrl}
               alt="post image"
-              className="rounded-md object-contain max-h-[400px]"
+              className="rounded-md object-contain w-full max-h-[400px]"
             />
           )}
           <div className="flex items-center gap-6">

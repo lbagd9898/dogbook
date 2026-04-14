@@ -75,7 +75,7 @@ function UserProfile() {
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
-      <main className="p-6 relative flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+      <main className="p-2 sm:p-4 md:p-6 relative flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto overflow-x-hidden">
         {isError ? (
           <div className="flex flex-col items-center justify-center h-full gap-4 text-center font-doggy">
             <div className="p-8 bg-white rounded border-2 border-[#82C88F] shadow-md flex flex-col items-center gap-3">
@@ -100,7 +100,7 @@ function UserProfile() {
         >
           {formError}
         </div>
-        <div className="flex flex-col gap-4 font-doggy lg:w-[40vw] xl:w-[50vw]">
+        <div className="flex flex-col gap-4 font-doggy w-full lg:w-[40vw] xl:w-[50vw]">
           <div className="p-3 flex flex-col gap-4 rounded border border-2 border-[#82C88F] bg-white">
             <div className="flex gap-3 text-md md:text-xl">
               <div className="flex flex-1 p-1 md:p-2 lg:p-4 rounded shadow-md border border-2 border-[#82C88F] bg-gradient-to-br flex-col items-center from-white via-gray-200 to-gray-300">

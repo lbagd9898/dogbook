@@ -78,6 +78,7 @@ export async function postPost(req, res) {
           select: {
             id: true,
             username: true,
+            picUrl: true,
           },
         },
       },
@@ -205,66 +206,63 @@ export async function getFollowing(req, res) {
 
 export async function getSinglePost(req, res) {
   const { postId } = req.params;
-
-  console.log("post id", postId);
-
   const userId = req.user.id;
 
-  console.log(userId);
-
-  const post = await prisma.post.findUnique({
-    where: {
-      id: Number(postId),
-    },
-    include: {
-      author: {
-        select: {
-          username: true,
-          id: true,
-          picUrl: true,
+  try {
+    const post = await prisma.post.findUnique({
+      where: {
+        id: Number(postId),
+      },
+      include: {
+        author: {
+          select: {
+            username: true,
+            id: true,
+            picUrl: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  const comments = await prisma.comment.findMany({
-    where: {
-      postId: Number(postId),
-    },
-    orderBy: {
-      date: "asc",
-    },
-    include: {
-      author: {
-        select: {
-          id: true,
-          username: true,
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+
+    const comments = await prisma.comment.findMany({
+      where: {
+        postId: Number(postId),
+      },
+      orderBy: {
+        date: "asc",
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  const likes = await prisma.like.findMany({
-    where: {
-      postId: Number(postId),
-    },
-    orderBy: {
-      date: "desc",
-    },
-  });
+    const likes = await prisma.like.findMany({
+      where: {
+        postId: Number(postId),
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
 
-  const isLikedByUser = likes.some((like) => like.userId === req.user.id);
+    const isLikedByUser = likes.some((like) => like.userId === userId);
+    const likeCount = likes.length;
 
-  const likeCount = likes.length;
-
-  console.log(post);
-  console.log(comments);
-  console.log(likes);
-  console.log(likeCount);
-
-  const detailedPost = { ...post, likes: likeCount, comments, isLikedByUser };
-  console.log(detailedPost);
-  return res.status(200).json({ post: detailedPost });
+    const detailedPost = { ...post, likes: likeCount, comments, isLikedByUser };
+    return res.status(200).json({ post: detailedPost });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "Server error." });
+  }
 }
 
 export async function uploadImage(req, res) {

@@ -12,10 +12,13 @@ export function AuthProvider({ children }) {
         method: "GET",
         credentials: "include",
       });
-      if (!res.ok) return null;
+      if (res.status === 401 || res.status === 403) return null;
+      if (!res.ok) throw new Error("verify_failed");
       const json = await res.json();
       return json.user;
     },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
   });
 
   if (isLoading) return <Loading />;

@@ -49,7 +49,7 @@ export default function Dashboard() {
         throw new Error("network");
       }
       if (res.status === 401) {
-        window.location.href = "/login";
+        window.location.href = "/";
         return;
       }
       if (res.status >= 500) throw new Error("server");
@@ -109,7 +109,7 @@ export default function Dashboard() {
         });
 
         if (uploadRes.status === 401) {
-          window.location.href = "/login";
+          window.location.href = "/";
           return;
         }
         if (!uploadRes.ok) {
@@ -134,7 +134,7 @@ export default function Dashboard() {
       });
 
       if (res.status === 401) {
-        window.location.href = "/login";
+        window.location.href = "/";
         return;
       }
       if (res.status >= 500) {
@@ -162,7 +162,7 @@ export default function Dashboard() {
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
-      <main className="p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+      <main className="p-2 sm:p-4 md:p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto overflow-x-hidden">
         {isError && error?.message === "server" && (
           <div className="flex flex-col items-center gap-3 mt-12 font-doggy">
             <p className="text-[#366B40]">Failed to load your BarkFeed.</p>
@@ -205,7 +205,7 @@ export default function Dashboard() {
             >
               {formError}
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-full lg:w-[40vw] xl:w-[50vw]">
               <div className="flex gap-2 items-center font-doggy">
                 <h1 className="text-xl lg:text-2xl">Your BarkFeed</h1>
                 <img className="w-[1.5em] h-[1.5em]" src={pawprint} alt="" />

@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "../components/Navbar";
 import Rightsidebar from "../components/Rightsidebar";
+import SuggestionsModal from "../components/SuggestionsModal";
 import pawprint from "../assets/icons/pawprint.svg";
 import wolfpack from "../assets/icons/wolfpack.svg";
 
@@ -59,7 +60,7 @@ export default function Search() {
             />
             <button
               onClick={handleSearch}
-              className="bg-[#82C88F] px-2 py-1 shadow-md rounded-lg border-2 border-black hover:bg-[#6fb97c] hover:shadow-lg active:scale-95 transition-all duration-150 ease-out font-doggy"
+              className="hidden sm:block bg-[#82C88F] px-2 py-1 shadow-md rounded-lg border-2 border-black hover:bg-[#6fb97c] hover:shadow-lg active:scale-95 transition-all duration-150 ease-out font-doggy"
             >
               Search
             </button>
@@ -91,6 +92,9 @@ export default function Search() {
             ))}
           </div>
         </div>
+
+        {/* Suggestions */}
+        {!submittedQuery && <SuggestionsModal className="w-full max-w-xl" />}
       </main>
       <Rightsidebar />
     </div>

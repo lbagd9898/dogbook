@@ -103,14 +103,14 @@ export const getGithub = [
 export function getGithubCallback(req, res, next) {
   passport.authenticate("github", async (err, user, info) => {
     if (err)
-      return res.redirect(`${process.env.CLIENT_URL}login?error=github_failed`);
+      return res.redirect(`${process.env.CLIENT_URL}?error=github_failed`);
     if (user) {
       console.log("token issued");
       await issueTokens(res, user);
       return res.redirect(`${process.env.CLIENT_URL}dashboard`);
     }
     if (!info?.githubProfile?.id) {
-      return res.redirect(`${process.env.CLIENT_URL}login?error=github_failed`);
+      return res.redirect(`${process.env.CLIENT_URL}?error=github_failed`);
     }
 
     req.session.oauthLink = {
@@ -126,14 +126,12 @@ export function getGithubCallback(req, res, next) {
 export function postLinkGithub(req, res, next) {
   passport.authenticate("local", async (err, user, info) => {
     if (err)
-      return res.redirect(`${process.env.CLIENT_URL}login?error=server_error`);
+      return res.status(500).json({ message: "Server error. Please try again." });
     if (!user) return res.status(401).json({ message: info.message });
     console.log(user);
     console.log(req.session.oauthLink);
     if (!req.session.oauthLink?.githubId) {
-      return res.redirect(
-        `${process.env.CLIENT_URL}login?error=session_expired`
-      );
+      return res.status(401).json({ message: "Session expired. Please sign in with GitHub again." });
     }
 
     try {

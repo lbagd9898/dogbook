@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-export default function SuggestionsModal() {
+export default function SuggestionsModal({ className = "lg:w-[40vw] xl:w-[50vw]" }) {
   const queryClient = useQueryClient();
   const [followedIds, setFollowedIds] = useState(new Set());
 
@@ -41,7 +41,9 @@ export default function SuggestionsModal() {
         return next;
       });
       if (data.following) {
-        queryClient.invalidateQueries({ queryKey: ["posts"] });
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ["posts"] });
+        }, 10000);
         queryClient.invalidateQueries({ queryKey: ["following"] });
       }
     },
@@ -50,7 +52,7 @@ export default function SuggestionsModal() {
   const suggestions = data?.suggestions ?? [];
 
   return (
-    <div className="border-2 border-[#82C88F] rounded-md p-6 bg-gradient-to-br from-slate-50 to-slate-100 shadow-md font-doggy flex flex-col gap-4 lg:w-[40vw] xl:w-[50vw]">
+    <div className={`border-2 border-[#82C88F] rounded-md p-6 bg-gradient-to-br from-slate-50 to-slate-100 shadow-md font-doggy flex flex-col gap-4 ${className}`}>
       <h2 className="text-2xl text-[#82C88F]">Find Your Pack</h2>
       <p className="text-gray-500 text-lg">Follow someone to get started!</p>
       {isLoading && (
@@ -65,12 +67,11 @@ export default function SuggestionsModal() {
         <p className="text-center text-gray-400 italic">No other users yet.</p>
       )}
       {suggestions.map((user) => (
-        <Link
-          to={`/user/${user.id}`}
-          key={user.id}
-          className="flex items-center justify-between gap-3 hover:bg-gray-200 cursor-pointer rounded p-2"
-        >
-          <div className="flex items-center gap-3 min-w-0 transition-colors duration-150">
+        <div key={user.id} className="flex items-center justify-between gap-3 rounded p-2 hover:bg-gray-200">
+          <Link
+            to={`/user/${user.id}`}
+            className="flex items-center gap-3 min-w-0 transition-colors duration-150 cursor-pointer"
+          >
             <img
               className="w-[2.5em] h-[2.5em] rounded-full object-cover flex-shrink-0"
               src={user.picUrl || wolfpack}
@@ -82,18 +83,19 @@ export default function SuggestionsModal() {
                 <em className="text-sm text-gray-500 truncate">{user.breed}</em>
               )}
             </div>
-          </div>
+          </Link>
           <button
             onClick={() => toggleFollow(user.id)}
-            className={`flex-shrink-0 px-4 py-2 shadow-md rounded-lg border-2 transition-all duration-150 ease-out hover:shadow-lg active:scale-95 ${
+            className={`flex-shrink-0 px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base shadow-md rounded-lg border-2 transition-all duration-150 ease-out hover:shadow-lg active:scale-95 ${
               followedIds.has(user.id)
                 ? "bg-gray-200 border-[#82C88F] hover:bg-gray-300"
                 : "bg-[#82C88F] border-black hover:bg-[#6fb97c]"
             }`}
           >
-            {followedIds.has(user.id) ? "Unfollow" : "Follow"}
+            <span className="sm:hidden">{followedIds.has(user.id) ? "−" : "+"}</span>
+            <span className="hidden sm:inline">{followedIds.has(user.id) ? "Unfollow" : "Follow"}</span>
           </button>
-        </Link>
+        </div>
       ))}
     </div>
   );

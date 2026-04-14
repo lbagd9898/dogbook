@@ -192,20 +192,25 @@ export async function searchUsers(req, res) {
   console.log("search user reached");
   const { username } = req.query;
 
-  const users = await prisma.user.findMany({
-    where: {
-      username: {
-        contains: username,
-        mode: "insensitive",
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        username: {
+          contains: username,
+          mode: "insensitive",
+        },
+        NOT: { id: req.user.id },
       },
-      NOT: { id: req.user.id },
-    },
-    select: {
-      id: true,
-      username: true,
-      picUrl: true,
-    },
-  });
+      select: {
+        id: true,
+        username: true,
+        picUrl: true,
+      },
+    });
 
-  res.json({ users });
+    res.status(200).json({ users });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Server error." });
+  }
 }
