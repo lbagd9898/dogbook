@@ -61,19 +61,18 @@ export default function GitHubSignIn() {
         },
         body: JSON.stringify(inputVals),
       });
-      const data = await res.json();
       if (res.ok) {
+        const data = await res.json();
         queryClient.setQueryData(["user"], data.user);
-
         navigate("/dashboard");
       } else {
-        console.log("not success", data);
+        const data = await res.json();
         if (data.message) {
           setErrors([data.message]);
         }
       }
     } catch (e) {
-      console.log(e);
+      setErrors(["Something went wrong. Please try again."]);
     }
   };
 

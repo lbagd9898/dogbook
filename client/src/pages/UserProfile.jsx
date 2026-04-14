@@ -7,12 +7,9 @@ import PostIcon from "../assets/icons/postIcon";
 import grayPawprint from "../assets/icons/grayPawprint.svg";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 function UserProfile() {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
   const [followedByUser, setFollowedByUser] = useState(false);
 
   //shows error alert if user hasn't enterred valid form data
@@ -47,44 +44,58 @@ function UserProfile() {
       setFollowedByUser(data.following);
       queryClient.invalidateQueries({ queryKey: ["following"] });
     },
-    onError: (e) => console.error(e),
+    onError: () => toggleFormError("Failed to follow. Please try again."),
   });
 
   const { userId } = useParams();
-  console.log(userId);
+
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["userData", userId],
+    queryFn: async () => {
+      const res = await fetch(`http://localhost:3000/user/${userId}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.message);
+      }
+      return res.json();
+    },
+  });
+
+  const user = data?.user;
+  const posts = data?.posts;
 
   useEffect(() => {
-    const getUserData = async () => {
-      console.log("fetch made");
-      try {
-        const res = await fetch(`http://localhost:3000/user/${userId}`, {
-          method: "GET",
-          credentials: "include",
-        });
-        const data = await res.json();
-        console.log(data);
-        setUser(data.user);
-        setPosts(data.posts);
-        setFollowedByUser(data.user.isFollowing);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (data?.user) setFollowedByUser(data.user.isFollowing);
+  }, [data]);
 
-    getUserData();
-  }, [userId]);
-
-  if (loading === true) return <Loading></Loading>;
+  if (isLoading) return <Loading />;
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
       <main className="p-6 relative flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
+        {isError ? (
+          <div className="flex flex-col items-center justify-center h-full gap-4 text-center font-doggy">
+            <div className="p-8 bg-white rounded border-2 border-[#82C88F] shadow-md flex flex-col items-center gap-3">
+              <div className="text-5xl">🐾</div>
+              <h2 className="text-2xl text-[#82C88F]">Something went wrong</h2>
+              <p className="text-gray-500 text-lg">{error.message}</p>
+              <button
+                onClick={() => refetch()}
+                className="mt-2 bg-white px-4 py-2 shadow-md rounded-lg border-2 border-[#82C88F] hover:bg-gray-200 hover:shadow-lg active:scale-95 transition-all duration-150 ease-out"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        ) : (
+        <>
         <div
-          className={`absolute top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
-        text-red-800 px-4 py-2 
-        rounded-md shadow-md 
+          className={`absolute top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600
+        text-red-800 px-4 py-2
+        rounded-md shadow-md
         transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}
         >
           {formError}
@@ -155,6 +166,8 @@ function UserProfile() {
             <Post key={post.id} post={post} toggleFormError={toggleFormError} />
           ))}
         </div>
+        </>
+        )}
       </main>
       <Rightsidebar />
     </div>

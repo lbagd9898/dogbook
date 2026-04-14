@@ -28,7 +28,7 @@ export default function MyProfile() {
     setTimeout(() => setFormError(""), 3700);
   }
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["myUserData"],
     queryFn: async () => {
       console.log("fetching...");
@@ -38,7 +38,7 @@ export default function MyProfile() {
       });
       if (!res.ok) {
         console.log("request failed");
-        const body = res.json();
+        const body = await res.json();
         throw new Error(body.message);
       }
       const data = await res.json();

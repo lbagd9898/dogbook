@@ -4,30 +4,24 @@ import Rightsidebar from "../components/Rightsidebar";
 import Post from "../components/Post";
 import Makepost from "../components/Makepost";
 import Loading from "../components/Loading";
-import { useState, useEffect, useCallback } from "react";
+import SuggestionsModal from "../components/SuggestionsModal";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Dashboard() {
-  const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
+
   const [imageFile, setImageFile] = useState(null);
-
-  //user's username to update in the UI
-  const [user, setUser] = useState(null);
-
   const [postInput, setPostInput] = useState({ title: "", content: "" });
 
-  //shows error alert if user hasn't enterred valid form data
+  //shows error alert if user hasn't entered valid form data
   const [formError, setFormError] = useState("");
   const [showError, setShowError] = useState(false);
 
   function toggleFormError(error) {
-    //if error already showing ignore
     if (showError) return;
-    //set show error
     setFormError(error);
     setShowError(true);
-
     setTimeout(() => setShowError(false), 3000);
     setTimeout(() => setFormError(""), 3700);
   }
@@ -38,15 +32,39 @@ export default function Dashboard() {
     setPostInput((prev) => ({ ...prev, [name]: value }));
   }
 
-  //save image file when user attaches one in form
   const handleImageChange = (e) => {
     setImageFile(e.target.files[0]);
   };
 
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["posts"],
+    queryFn: async () => {
+      let res;
+      try {
+        res = await fetch("http://localhost:3000/dash/get-posts", {
+          method: "GET",
+          credentials: "include",
+        });
+      } catch {
+        throw new Error("network");
+      }
+      if (res.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
+      if (res.status >= 500) throw new Error("server");
+      if (!res.ok) throw new Error("general");
+      return res.json();
+    },
+    retry: false,
+  });
+
+  const posts = data?.posts ?? [];
+  const user = data?.user ?? null;
+
   async function onSubmit(e) {
     e.preventDefault();
 
-    // form validation — unchanged
     if (postInput.title.trim() === "") {
       toggleFormError("Post must have a title.");
       return;
@@ -70,14 +88,8 @@ export default function Dashboard() {
 
     let imageUrl = null;
 
-    // STEP 1: image upload (if attached)
     if (imageFile) {
-      const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ];
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
       if (!allowedTypes.includes(imageFile.type)) {
         toggleFormError("Image must be a JPEG, PNG, GIF, or WebP file.");
         return;
@@ -102,18 +114,17 @@ export default function Dashboard() {
         }
         if (!uploadRes.ok) {
           toggleFormError("Image upload failed. Please try again.");
-          return; // block the post entirely
+          return;
         }
 
         const uploadData = await uploadRes.json();
         imageUrl = uploadData.url;
       } catch (err) {
         toggleFormError("Image upload failed. Check your connection.");
-        return; // block the post entirely
+        return;
       }
     }
 
-    // STEP 2: submit the post
     try {
       const res = await fetch("http://localhost:3000/dash/new-post", {
         method: "POST",
@@ -135,8 +146,11 @@ export default function Dashboard() {
         return;
       }
 
-      const data = await res.json();
-      setPosts((prev) => [data.newPost, ...prev]);
+      const postData = await res.json();
+      queryClient.setQueryData(["posts"], (old) => ({
+        ...old,
+        posts: [postData.newPost, ...(old?.posts ?? [])],
+      }));
       setPostInput({ title: "", content: "" });
       setImageFile(null);
     } catch (err) {
@@ -144,53 +158,16 @@ export default function Dashboard() {
     }
   }
 
-  const loadPosts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("http://localhost:3000/dash/get-posts", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (res.status === 401) {
-        window.location.href = "/login";
-        return;
-      }
-      if (res.status >= 500) {
-        setError("server");
-        return;
-      }
-      if (!res.ok) {
-        setError("general");
-        return;
-      }
-
-      const data = await res.json();
-      setPosts(data.posts);
-      setUser(data.user);
-    } catch (err) {
-      // network error - fetch itself threw
-      setError("network");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadPosts();
-  }, [loadPosts]);
-
-  if (loading === true) return <Loading></Loading>;
+  if (isLoading) return <Loading />;
   return (
     <div className="grid grid-cols-[4em_1fr] md:grid-cols-[12rem_1fr] lg:grid-cols-[16rem_1fr_14rem] min-h-screen">
       <Navbar />
       <main className="p-6 flex flex-col items-center h-screen bg-gradient-to-br from-gray-100 to-gray-300 via-gray-200 overflow-y-auto">
-        {error === "server" && (
+        {isError && error?.message === "server" && (
           <div className="flex flex-col items-center gap-3 mt-12 font-doggy">
             <p className="text-[#366B40]">Failed to load your BarkFeed.</p>
             <button
-              onClick={loadPosts}
+              onClick={refetch}
               className="px-4 py-2 border border-[#366B40] rounded hover:bg-[#366B40] hover:text-white transition"
             >
               Try again
@@ -198,13 +175,13 @@ export default function Dashboard() {
           </div>
         )}
 
-        {error === "network" && (
+        {isError && error?.message === "network" && (
           <div className="flex flex-col items-center gap-3 mt-12 font-doggy">
             <p className="text-[#366B40]">
               No connection. Check your internet and try again.
             </p>
             <button
-              onClick={loadPosts}
+              onClick={refetch}
               className="px-4 py-2 border border-[#366B40] rounded hover:bg-[#366B40] hover:text-white transition"
             >
               Retry
@@ -212,18 +189,18 @@ export default function Dashboard() {
           </div>
         )}
 
-        {error === "general" && (
+        {isError && error?.message === "general" && (
           <p className="mt-12 font-doggy text-[#366B40]">
             Something went wrong. Please refresh the page.
           </p>
         )}
 
-        {!error && (
+        {!isError && (
           <>
             <div
-              className={`fixed z-10 top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600 
-        text-red-800 px-4 py-2 
-        rounded-md shadow-md 
+              className={`fixed z-10 top-4 font-doggy left-1/2 -translate-x-1/2 bg-red-100 border border-red-600
+        text-red-800 px-4 py-2
+        rounded-md shadow-md
         transition-opacity duration-700 ${showError ? "opacity-100" : "opacity-0"}`}
             >
               {formError}
@@ -240,14 +217,18 @@ export default function Dashboard() {
                 onSubmit={onSubmit}
                 imageFile={imageFile}
                 handleImageChange={handleImageChange}
-              ></Makepost>
-              {posts.map((post) => (
-                <Post
-                  key={post.id}
-                  post={post}
-                  toggleFormError={toggleFormError}
-                />
-              ))}
+              />
+              {data?.followingCount === 0 ? (
+                <SuggestionsModal />
+              ) : (
+                posts.map((post) => (
+                  <Post
+                    key={post.id}
+                    post={post}
+                    toggleFormError={toggleFormError}
+                  />
+                ))
+              )}
             </div>
           </>
         )}

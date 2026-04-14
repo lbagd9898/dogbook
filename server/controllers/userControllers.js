@@ -46,7 +46,7 @@ export async function getUserData(req, res) {
     return res.status(200).json({ user, posts });
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ message: e });
+    return res.status(500).json({ message: e.message });
   }
 }
 
@@ -76,40 +76,35 @@ async function getUserPosts(userId, currUserId) {
 
 export async function getMyUser(req, res) {
   try {
-    const userId = req.user.id;
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: Number(userId),
-      },
-    });
-    if (!user) {
-      return res.status(404).json({ message: "user not found." });
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    //how many are they following
-    const following = await prisma.follow.count({
-      where: {
-        followerId: user.id,
-      },
+    const userId = Number(req.user.id);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
     });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    const followers = await prisma.follow.count({
-      where: {
-        followedId: user.id,
-      },
+    const [following, followers, posts] = await Promise.all([
+      prisma.follow.count({ where: { followerId: userId } }),
+      prisma.follow.count({ where: { followedId: userId } }),
+      getUserPosts(userId, userId),
+    ]);
+
+    return res.status(200).json({
+      user: { ...user, following, followers },
+      posts,
     });
-
-    user["following"] = following;
-
-    user["followers"] = followers;
-
-    const posts = await getUserPosts(userId, userId);
-
-    return res.status(200).json({ user, posts });
   } catch (e) {
-    console.log(e);
-    return res.status(500).json({ message: "server error" });
+    console.error("Error in getMyUser:", e.message);
+    return res.status(500).json({ message: "An unexpected error occurred" });
   }
 }
 
@@ -166,6 +161,30 @@ export async function toggleFollow(req, res) {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "db error" });
+  }
+}
+
+export async function getSuggestions(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const followed = await prisma.follow.findMany({
+      where: { followerId: userId },
+      select: { followedId: true },
+    });
+    const followedIds = followed.map((f) => f.followedId);
+
+    const users = await prisma.user.findMany({
+      where: {
+        id: { notIn: [...followedIds, userId] },
+      },
+      select: { id: true, username: true, picUrl: true, breed: true },
+    });
+
+    const suggestions = users.sort(() => Math.random() - 0.5).slice(0, 5);
+    return res.status(200).json({ suggestions });
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
   }
 }
 

@@ -117,18 +117,16 @@ export default function SignIn() {
           body: JSON.stringify(inputVals),
           credentials: "include",
         });
-        const data = await res.json();
-        //error renders in the console
         if (!res.ok) {
-          console.log(data);
+          const data = await res.json();
           setErrors([data.message]);
           return;
         }
+        const data = await res.json();
         queryClient.setQueryData(["user"], data.user);
-
         navigate("/dashboard");
       } catch (e) {
-        console.log(e);
+        setErrors(["Something went wrong. Please try again."]);
       }
     }
   };

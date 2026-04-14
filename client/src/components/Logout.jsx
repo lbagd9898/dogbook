@@ -1,4 +1,5 @@
 import Form from "./Form";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -8,6 +9,7 @@ export default function Logout({ setShowLogout }) {
   const header = "Are you sure?";
   const buttonText = "Yes";
 
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const onSubmit = async (e) => {
@@ -24,7 +26,7 @@ export default function Logout({ setShowLogout }) {
         navigate("/");
       }
     } catch (err) {
-      console.error("logout failed", err);
+      setError("Logout failed. Please try again.");
     }
   };
 
@@ -49,6 +51,9 @@ export default function Logout({ setShowLogout }) {
           onSubmit={onSubmit}
           buttonText={buttonText}
         ></Form>
+        {error && (
+          <p className="mt-2 text-red-600 text-sm text-center">{error}</p>
+        )}
       </div>
     </div>
   );

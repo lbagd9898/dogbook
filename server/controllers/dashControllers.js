@@ -48,7 +48,7 @@ export async function getDashboard(req, res) {
   //get current user
   const userData = await getUser(userId);
   console.log("current user", userData);
-  return res.status(200).json({ posts: detailedPosts, user: userData });
+  return res.status(200).json({ posts: detailedPosts, user: userData, followingCount: following.length });
 }
 
 export async function postPost(req, res) {

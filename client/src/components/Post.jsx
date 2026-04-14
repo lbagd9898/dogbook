@@ -49,12 +49,11 @@ export default function Post(props) {
         throw new Error("HTTP ERROR");
       }
       const data = await res.json();
-      console.log(data);
       setComments(data.allComments);
       setVisibleCommentCount((prev) => prev + 1);
       setUserComment("");
     } catch (e) {
-      console.error(e);
+      props.toggleFormError("Failed to post comment. Please try again.");
     }
   }
 
@@ -92,10 +91,9 @@ export default function Post(props) {
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
         }
-        const data = await res.json();
-        console.log(data);
+        await res.json();
       } catch (e) {
-        console.error(e);
+        props.toggleFormError("Failed to update like. Please try again.");
       }
     };
 

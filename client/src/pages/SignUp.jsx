@@ -90,14 +90,12 @@ export default function SignUp() {
           },
           body: JSON.stringify(inputVals),
         });
-        const data = await res.json();
         if (res.ok) {
-          console.log("successful", data);
           navigate("/", {
             state: { showBanner: true },
           });
         } else {
-          console.log(data);
+          const data = await res.json();
           if (data.message) {
             setErrors([data.message]);
           }
@@ -108,7 +106,6 @@ export default function SignUp() {
         }
       } catch (e) {
         setErrors(["Network error. Please try again."]);
-        console.log(e);
       }
     } else {
       return;
