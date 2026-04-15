@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-export default function SuggestionsModal({ className = "lg:w-[40vw] xl:w-[50vw]" }) {
+export default function SuggestionsModal({ className = "lg:w-[40vw] xl:w-[50vw]", showPrompt = true }) {
   const queryClient = useQueryClient();
   const [followedIds, setFollowedIds] = useState(new Set());
 
@@ -54,7 +54,7 @@ export default function SuggestionsModal({ className = "lg:w-[40vw] xl:w-[50vw]"
   return (
     <div className={`border-2 border-[#82C88F] rounded-md p-6 bg-gradient-to-br from-slate-50 to-slate-100 shadow-md font-doggy flex flex-col gap-4 ${className}`}>
       <h2 className="text-2xl text-[#82C88F]">Find Your Pack</h2>
-      <p className="text-gray-500 text-lg">Follow someone to get started!</p>
+      {showPrompt && <p className="text-gray-500 text-lg">Follow someone to get started!</p>}
       {isLoading && (
         <p className="text-center text-gray-400 italic">
           Loading suggestions...

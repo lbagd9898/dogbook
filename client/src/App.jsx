@@ -11,11 +11,15 @@ import { AuthProvider } from "./AuthProvider";
 import MyProfile from "./pages/MyProfile";
 import Search from "./pages/Search";
 import SinglePost from "./pages/SinglePost";
+import FakeDashboard from "./pages/FakeDashboard";
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
+        {/* Fully public — no auth redirect in either direction */}
+        <Route path="/preview" element={<FakeDashboard />} />
+
         {/* Public routes — redirects to / if already logged in */}
         <Route element={<PublicRoute />}>
           <Route path="/" element={<SignIn />} />

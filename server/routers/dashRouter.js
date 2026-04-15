@@ -8,6 +8,7 @@ import {
   getFollowing,
   getSinglePost,
   uploadImage,
+  getPreviewPosts,
 } from "../controllers/dashControllers.js";
 import multer from "multer";
 const upload = multer({ storage: multer.memoryStorage() });
@@ -18,6 +19,7 @@ dashRouter.get("/", (req, res) => {
   res.send("Dashboard API working");
 });
 dashRouter.get("/get-posts", verifyToken, getDashboard);
+dashRouter.get("/preview-posts", getPreviewPosts);
 dashRouter.post("/upload", verifyToken, upload.single("image"), uploadImage);
 dashRouter.post("/new-post", verifyToken, postPost);
 dashRouter.post("/update-likes", verifyToken, postUpdateLikes);

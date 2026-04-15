@@ -160,6 +160,13 @@ export default function SignIn() {
               theme="dark"
               icon={githubIcon}
             ></Button>
+            <div className="w-full border-t border-gray-200 mt-1" />
+            <p className="text-sm md:text-base text-gray-500">Just browsing?</p>
+            <Button
+              text="Preview Dogbook"
+              theme="light"
+              onClick={() => navigate("/preview")}
+            />
           </div>
           {errors?.length > 0 && <Errors errors={errors} />}
           {showBanner && (

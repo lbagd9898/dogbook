@@ -265,6 +265,46 @@ export async function getSinglePost(req, res) {
   }
 }
 
+export async function getPreviewPosts(req, res) {
+  try {
+    const randomRows = await prisma.$queryRaw`SELECT id FROM "Post" ORDER BY RANDOM() LIMIT 10`;
+    const postIds = randomRows.map((r) => Number(r.id));
+
+    if (postIds.length === 0) {
+      return res.status(200).json({ posts: [] });
+    }
+
+    const posts = await prisma.post.findMany({
+      where: { id: { in: postIds } },
+      include: {
+        author: {
+          select: { id: true, username: true, picUrl: true },
+        },
+      },
+    });
+
+    const comments = await getComments(postIds);
+    const likes = await getLikes(postIds);
+
+    const likeCounts = likes.reduce((acc, like) => {
+      acc[like.postId] = (acc[like.postId] || 0) + 1;
+      return acc;
+    }, {});
+
+    const detailedPosts = posts.map((post) => ({
+      ...post,
+      likes: likeCounts[post.id] || 0,
+      comments: comments[post.id] || [],
+      likedByUser: false,
+    }));
+
+    return res.status(200).json({ posts: detailedPosts });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "Server error." });
+  }
+}
+
 export async function uploadImage(req, res) {
   try {
     const fileBuffer = req.file.buffer.toString("base64");

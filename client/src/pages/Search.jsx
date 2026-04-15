@@ -94,7 +94,7 @@ export default function Search() {
         </div>
 
         {/* Suggestions */}
-        {!submittedQuery && <SuggestionsModal className="w-full max-w-xl" />}
+        {!submittedQuery && <SuggestionsModal className="w-full max-w-xl" showPrompt={false} />}
       </main>
       <Rightsidebar />
     </div>
