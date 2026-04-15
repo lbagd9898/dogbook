@@ -218,16 +218,15 @@ export default function Dashboard() {
                 imageFile={imageFile}
                 handleImageChange={handleImageChange}
               />
-              {data?.followingCount === 0 ? (
+              {posts.map((post) => (
+                <Post
+                  key={post.id}
+                  post={post}
+                  toggleFormError={toggleFormError}
+                />
+              ))}
+              {data?.followingCount === 0 && posts.length === 0 && (
                 <SuggestionsModal />
-              ) : (
-                posts.map((post) => (
-                  <Post
-                    key={post.id}
-                    post={post}
-                    toggleFormError={toggleFormError}
-                  />
-                ))
               )}
             </div>
           </>
