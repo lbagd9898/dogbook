@@ -102,15 +102,16 @@ export const getGithub = [
 
 export function getGithubCallback(req, res, next) {
   passport.authenticate("github", async (err, user, info) => {
+    const clientUrl = process.env.CLIENT_URL?.replace(/\/$/, "");
     if (err)
-      return res.redirect(`${process.env.CLIENT_URL}?error=github_failed`);
+      return res.redirect(`${clientUrl}?error=github_failed`);
     if (user) {
       console.log("token issued");
       await issueTokens(res, user);
-      return res.redirect(`${process.env.CLIENT_URL}dashboard`);
+      return res.redirect(`${clientUrl}/dashboard`);
     }
     if (!info?.githubProfile?.id) {
-      return res.redirect(`${process.env.CLIENT_URL}?error=github_failed`);
+      return res.redirect(`${clientUrl}?error=github_failed`);
     }
 
     req.session.oauthLink = {
@@ -119,7 +120,7 @@ export function getGithubCallback(req, res, next) {
     };
 
     console.log(req.session.oauthLink);
-    return res.redirect(`${process.env.CLIENT_URL}github`);
+    return res.redirect(`${clientUrl}/github`);
   })(req, res, next);
 }
 
