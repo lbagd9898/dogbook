@@ -2,6 +2,7 @@ import { prisma } from "../prismaClient.js";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import passport from "passport";
+import jwt from "jsonwebtoken";
 import { issueTokens } from "../middleware/issueTokens.js";
 
 export const validateSignUp = [
@@ -114,13 +115,12 @@ export function getGithubCallback(req, res, next) {
       return res.redirect(`${clientUrl}?error=github_failed`);
     }
 
-    req.session.oauthLink = {
-      provider: "github",
-      githubId: info.githubProfile.id,
-    };
-
-    console.log(req.session.oauthLink);
-    return res.redirect(`${clientUrl}/github`);
+    const linkToken = jwt.sign(
+      { githubId: info.githubProfile.id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "10m" }
+    );
+    return res.redirect(`${clientUrl}/github?token=${linkToken}`);
   })(req, res, next);
 }
 
@@ -129,15 +129,19 @@ export function postLinkGithub(req, res, next) {
     if (err)
       return res.status(500).json({ message: "Server error. Please try again." });
     if (!user) return res.status(401).json({ message: info.message });
-    console.log(user);
-    console.log(req.session.oauthLink);
-    if (!req.session.oauthLink?.githubId) {
+    const { linkToken } = req.body;
+    if (!linkToken) {
+      return res.status(401).json({ message: "Session expired. Please sign in with GitHub again." });
+    }
+    let githubId;
+    try {
+      const decoded = jwt.verify(linkToken, process.env.ACCESS_TOKEN_SECRET);
+      githubId = decoded.githubId;
+    } catch {
       return res.status(401).json({ message: "Session expired. Please sign in with GitHub again." });
     }
 
     try {
-      const githubId = req.session.oauthLink.githubId;
-      console.log(githubId);
 
       //link githubid to user
       await prisma.user.update({

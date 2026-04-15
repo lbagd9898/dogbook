@@ -59,7 +59,10 @@ export default function GitHubSignIn() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(inputVals),
+        body: JSON.stringify({
+          ...inputVals,
+          linkToken: new URLSearchParams(window.location.search).get("token"),
+        }),
       });
       if (res.ok) {
         const data = await res.json();
