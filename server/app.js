@@ -28,7 +28,11 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 10 * 60 * 1000 }, //10 minutes
+    cookie: {
+      maxAge: 10 * 60 * 1000, //10 minutes
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
   })
 );
 app.use(express.json());
