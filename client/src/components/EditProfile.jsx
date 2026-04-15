@@ -33,7 +33,7 @@ export default function EditProfile({ setShowForm, toggleFormError }) {
         const formData = new FormData();
         formData.append("image", imageFile);
         console.log([...formData.entries()]);
-        const uploadRes = await fetch("http://localhost:3000/dash/upload", {
+        const uploadRes = await fetch(`${import.meta.env.VITE_API_URL}/dash/upload`, {
           method: "POST",
           body: formData,
           credentials: "include",
@@ -56,7 +56,7 @@ export default function EditProfile({ setShowForm, toggleFormError }) {
     //UPDATE USER DATA
     try {
       const res = await fetch(
-        "http://localhost:3000/user/update-user?type=profile",
+        `${import.meta.env.VITE_API_URL}/user/update-user?type=profile`,
         {
           method: "POST",
           headers: {

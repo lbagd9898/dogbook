@@ -12,7 +12,7 @@ export default function Rightsidebar() {
   } = useQuery({
     queryKey: ["following"],
     queryFn: async () => {
-      const res = await fetch("http://localhost:3000/dash/get-following", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/dash/get-following`, {
         method: "GET",
         credentials: "include",
       });

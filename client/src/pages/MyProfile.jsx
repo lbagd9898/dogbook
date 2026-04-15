@@ -33,7 +33,7 @@ export default function MyProfile() {
     queryKey: ["myUserData"],
     queryFn: async () => {
       console.log("fetching...");
-      const res = await fetch("http://localhost:3000/user/my-profile", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/my-profile`, {
         method: "GET",
         credentials: "include",
       });

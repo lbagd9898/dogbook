@@ -83,7 +83,7 @@ export default function SignUp() {
     console.log("submitted");
     if (errors.length === 0 && touched === true) {
       try {
-        const res = await fetch("http://localhost:3000/auth/sign-up", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/sign-up`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

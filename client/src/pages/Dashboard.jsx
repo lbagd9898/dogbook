@@ -41,7 +41,7 @@ export default function Dashboard() {
     queryFn: async () => {
       let res;
       try {
-        res = await fetch("http://localhost:3000/dash/get-posts", {
+        res = await fetch(`${import.meta.env.VITE_API_URL}/dash/get-posts`, {
           method: "GET",
           credentials: "include",
         });
@@ -102,7 +102,7 @@ export default function Dashboard() {
       try {
         const formData = new FormData();
         formData.append("image", imageFile);
-        const uploadRes = await fetch("http://localhost:3000/dash/upload", {
+        const uploadRes = await fetch(`${import.meta.env.VITE_API_URL}/dash/upload`, {
           method: "POST",
           body: formData,
           credentials: "include",
@@ -126,7 +126,7 @@ export default function Dashboard() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/dash/new-post", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/dash/new-post`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...postInput, imageUrl }),

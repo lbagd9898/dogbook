@@ -15,7 +15,7 @@ export default function Logout({ setShowLogout }) {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/auth/log-out", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/log-out`, {
         method: "POST",
         credentials: "include", // needed to send cookies
       });

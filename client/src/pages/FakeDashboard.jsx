@@ -56,7 +56,7 @@ export default function FakeDashboard() {
     queryFn: async () => {
       let res;
       try {
-        res = await fetch("http://localhost:3000/dash/preview-posts", {
+        res = await fetch(`${import.meta.env.VITE_API_URL}/dash/preview-posts`, {
           method: "GET",
         });
       } catch {

@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await fetch("http://localhost:3000/auth/verify", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify`, {
         method: "GET",
         credentials: "include",
       });

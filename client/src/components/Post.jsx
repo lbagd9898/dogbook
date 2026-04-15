@@ -37,7 +37,7 @@ export default function Post(props) {
       return;
     }
     try {
-      const res = await fetch("http://localhost:3000/dash/post-comment", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/dash/post-comment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +80,7 @@ export default function Post(props) {
     const updateLikes = async () => {
       try {
         console.log("update likes");
-        const res = await fetch("http://localhost:3000/dash/update-likes", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/dash/update-likes`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

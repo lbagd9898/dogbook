@@ -8,7 +8,7 @@ export default function ProtectedRoute() {
     const checkAuth = async () => {
       console.log("protected route reached");
       try {
-        const res = await fetch("http://localhost:3000/auth/verify", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify`, {
           method: "GET",
           credentials: "include", // important to send cookies
         });

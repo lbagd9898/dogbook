@@ -10,7 +10,7 @@ export default function SuggestionsModal({ className = "lg:w-[40vw] xl:w-[50vw]"
   const { data, isLoading, isError } = useQuery({
     queryKey: ["suggestions"],
     queryFn: async () => {
-      const res = await fetch("http://localhost:3000/user/suggestions", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/suggestions`, {
         method: "GET",
         credentials: "include",
       });
@@ -25,7 +25,7 @@ export default function SuggestionsModal({ className = "lg:w-[40vw] xl:w-[50vw]"
   const { mutate: toggleFollow } = useMutation({
     mutationFn: async (userId) => {
       const followedByUser = followedIds.has(userId);
-      const res = await fetch("http://localhost:3000/user/toggle-follow", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/toggle-follow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

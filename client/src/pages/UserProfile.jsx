@@ -31,7 +31,7 @@ function UserProfile() {
 
   const { mutate: toggleFollow } = useMutation({
     mutationFn: async () => {
-      const res = await fetch("http://localhost:3000/user/toggle-follow", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/toggle-follow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -52,7 +52,7 @@ function UserProfile() {
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["userData", userId],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3000/user/${userId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/${userId}`, {
         method: "GET",
         credentials: "include",
       });

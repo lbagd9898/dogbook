@@ -35,7 +35,7 @@ export default function SinglePost() {
     queryKey: ["post", postId],
     queryFn: async () => {
       console.log("fetching post data...");
-      const res = await fetch(`http://localhost:3000/dash/get-post/${postId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/dash/get-post/${postId}`, {
         method: "GET",
         credentials: "include",
       });

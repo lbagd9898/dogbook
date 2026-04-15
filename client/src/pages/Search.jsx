@@ -26,7 +26,7 @@ export default function Search() {
     queryKey: ["userSearch", submittedQuery],
     queryFn: async () => {
       const res = await fetch(
-        `http://localhost:3000/user/search?username=${submittedQuery}`,
+        `${import.meta.env.VITE_API_URL}/user/search?username=${submittedQuery}`,
         {
           credentials: "include",
         }

@@ -109,7 +109,7 @@ export default function SignIn() {
     console.log("submitted");
     if (errors.length === 0) {
       try {
-        const res = await fetch("http://localhost:3000/auth/log-in", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/log-in`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -155,7 +155,7 @@ export default function SignIn() {
             <Button
               text="Sign in with Github"
               onClick={() =>
-                (window.location.href = "http://localhost:3000/auth/github")
+                (window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`)
               }
               theme="dark"
               icon={githubIcon}
