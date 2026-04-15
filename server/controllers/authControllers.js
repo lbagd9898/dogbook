@@ -176,7 +176,8 @@ export async function postLogOut(req, res) {
       where: { refreshToken },
     });
   }
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  const cookieOptions = { httpOnly: true, secure: true, sameSite: "none" };
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
   return res.status(200).json({ message: "Logged out successfully" });
 }
